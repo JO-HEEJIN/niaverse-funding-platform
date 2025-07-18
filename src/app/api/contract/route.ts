@@ -50,6 +50,8 @@ export async function POST(request: NextRequest) {
         personalInfo,
         signature,
       },
+      accumulatedIncome: 0,
+      lastIncomeUpdate: new Date(timestamp),
     };
 
     fileStorage.addPurchase(purchase);

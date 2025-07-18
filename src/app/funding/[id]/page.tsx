@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { fundingOptions } from '@/lib/fundingData';
 import type { FundingOption } from '@/lib/fundingData';
 
@@ -16,6 +17,7 @@ export default function FundingPage({ params }: FundingPageProps) {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [customPrice, setCustomPrice] = useState('');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const { id } = use(params);
 
@@ -78,6 +80,12 @@ export default function FundingPage({ params }: FundingPageProps) {
     router.push('/contract');
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    router.push('/main');
+  };
+
   if (!funding) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -105,7 +113,7 @@ export default function FundingPage({ params }: FundingPageProps) {
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
                 <img 
                   src="/logo.png" 
-                  alt="NIAVERSE Logo" 
+                  alt="NIA CLOUD Logo" 
                   className="w-8 h-8 object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -114,9 +122,103 @@ export default function FundingPage({ params }: FundingPageProps) {
                   }}
                 />
               </div>
-              <h1 className="text-3xl font-bold text-white">NIAVERSE</h1>
+              <h1 className="text-3xl font-bold text-white">NIA CLOUD</h1>
             </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-3">
+              <Link
+                href="/dashboard"
+                className="px-3 py-1.5 text-sm text-white hover:bg-white/10 transition-all duration-200 rounded-md"
+              >
+                대시보드
+              </Link>
+              <Link
+                href="/purchase"
+                className="px-3 py-1.5 text-sm text-white hover:bg-white/10 transition-all duration-200 rounded-md"
+              >
+                구매
+              </Link>
+              <Link
+                href="/history"
+                className="px-3 py-1.5 text-sm text-white hover:bg-white/10 transition-all duration-200 rounded-md"
+              >
+                거래내역
+              </Link>
+              <Link
+                href="/departure"
+                className="px-3 py-1.5 text-sm text-white hover:bg-white/10 transition-all duration-200 rounded-md"
+              >
+                출금
+              </Link>
+              <div className="w-px h-6 bg-white/30 mx-2"></div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-sm font-medium"
+              >
+                로그아웃
+              </button>
+            </div>
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-md text-white hover:bg-white/10 transition-all duration-200"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
+          
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden pb-3 space-y-1">
+              <Link
+                href="/dashboard"
+                className="block px-3 py-2 text-white hover:bg-white/10 transition-all duration-200 text-center text-sm rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                대시보드
+              </Link>
+              <Link
+                href="/purchase"
+                className="block px-3 py-2 text-white hover:bg-white/10 transition-all duration-200 text-center text-sm rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                구매
+              </Link>
+              <Link
+                href="/history"
+                className="block px-3 py-2 text-white hover:bg-white/10 transition-all duration-200 text-center text-sm rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                거래내역
+              </Link>
+              <Link
+                href="/departure"
+                className="block px-3 py-2 text-white hover:bg-white/10 transition-all duration-200 text-center text-sm rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                출금
+              </Link>
+              <div className="border-t border-white/20 mt-2 pt-2">
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full px-3 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-all duration-200 text-center text-sm"
+                >
+                  로그아웃
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -153,7 +255,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                   <div>
                     <div className="h-64 bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
                       <img
-                        src={funding.image}
+                        src={`/img${funding.id}.png`}
                         alt={funding.title}
                         className="h-full w-full object-cover rounded-lg"
                         onError={(e) => {
@@ -167,16 +269,41 @@ export default function FundingPage({ params }: FundingPageProps) {
                       <h4 className="text-lg font-medium text-white mb-3">About This Project</h4>
                       <p className="text-gray-300 mb-4">{funding.description}</p>
                       
-                      <p className="text-gray-300 mb-4">
-                        This innovative project represents a breakthrough in {funding.details.category.toLowerCase()} 
-                        technology. With cutting-edge features and a commitment to excellence, this funding opportunity 
-                        allows you to be part of something truly revolutionary.
-                      </p>
-                      
-                      <p className="text-gray-300">
-                        Join thousands of other backers who believe in the future of technology and innovation. 
-                        Your support will help bring this vision to life and create lasting impact in the industry.
-                      </p>
+                      {funding.aboutProject ? (
+                        <div className="space-y-4">
+                          {funding.aboutProject.map((paragraph, index) => {
+                            // Check if this is a header (doesn't start with bullet point)
+                            const isHeader = !paragraph.startsWith('•');
+                            
+                            return (
+                              <div key={index}>
+                                {isHeader ? (
+                                  <h5 className="text-lg font-semibold text-cyan-400 mt-6 mb-3 first:mt-0">
+                                    {paragraph}
+                                  </h5>
+                                ) : (
+                                  <p className="text-gray-300 leading-relaxed">
+                                    {paragraph}
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <p className="text-gray-300">
+                            This innovative project represents a breakthrough in {funding.details.category.toLowerCase()} 
+                            technology. With cutting-edge features and a commitment to excellence, this funding opportunity 
+                            allows you to be part of something truly revolutionary.
+                          </p>
+                          
+                          <p className="text-gray-300">
+                            Join thousands of other backers who believe in the future of technology and innovation. 
+                            Your support will help bring this vision to life and create lasting impact in the industry.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -220,16 +347,16 @@ export default function FundingPage({ params }: FundingPageProps) {
                       <h4 className="text-lg font-medium text-white mb-4">Purchase Options</h4>
                       
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-black mb-2">
+                        <label className="block text-sm font-medium text-white mb-2">
                           Quantity
                         </label>
                         <select
                           value={selectedQuantity}
                           onChange={(e) => setSelectedQuantity(parseInt(e.target.value))}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          className="block w-full px-3 py-2 border border-white/30 rounded-md shadow-sm text-white bg-white/10 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                         >
                           {funding.priceStructure.map((price) => (
-                            <option key={price.quantity} value={price.quantity}>
+                            <option key={price.quantity} value={price.quantity} className="text-gray-900">
                               {price.quantity} unit{price.quantity > 1 ? 's' : ''} - {formatPrice(price.price)}
                             </option>
                           ))}
@@ -237,7 +364,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                       </div>
 
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-black mb-2">
+                        <label className="block text-sm font-medium text-white mb-2">
                           Custom Price (Optional)
                         </label>
                         <input
@@ -245,9 +372,9 @@ export default function FundingPage({ params }: FundingPageProps) {
                           value={customPrice}
                           onChange={(e) => setCustomPrice(e.target.value)}
                           placeholder="Enter custom amount"
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                          className="block w-full px-3 py-2 border border-white/30 rounded-md shadow-sm text-white bg-white/10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 placeholder-white/60"
                         />
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-gray-400 mt-1">
                           Leave empty to use standard pricing
                         </p>
                       </div>

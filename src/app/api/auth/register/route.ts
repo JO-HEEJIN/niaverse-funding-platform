@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { fileStorage } from '@/lib/fileStorage';
 
@@ -8,12 +7,13 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   name: z.string().min(2),
+  phone: z.string().regex(/^[0-9]{10,11}$/),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, name } = registerSchema.parse(body);
+    const { email, password, name, phone } = registerSchema.parse(body);
 
     // Check if user already exists
     const existingUser = fileStorage.findUserByEmail(email);
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       name,
+      phone,
       confirmed: true, // Auto-confirm user
     };
 
