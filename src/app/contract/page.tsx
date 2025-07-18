@@ -11,9 +11,8 @@ const contractSchema = z.object({
   email: z.string().email('유효한 이메일 주소를 입력하세요'),
   phone: z.string().min(10, '전화번호는 최소 10자 이상이어야 합니다'),
   address: z.string().min(10, '주소는 최소 10자 이상이어야 합니다'),
-  birthDate: z.string().min(1, '생년월일을 입력하세요'),
-  contractMonth: z.string().min(1, '계약 월을 입력하세요'),
-  contractDay: z.string().min(1, '계약 일을 입력하세요'),
+  birthDate: z.string().regex(/^[0-9]{8}$/, '생년월일은 8자리 숫자로 입력하세요 (예: 19900101)'),
+  contractDate: z.string().min(1, '계약일을 입력하세요'),
   agreeToTerms: z.boolean().refine((val) => val === true, '약관에 동의해야 합니다'),
 });
 
@@ -24,10 +23,11 @@ export default function ContractPage() {
   const [signature, setSignature] = useState('');
   const [isDrawing, setIsDrawing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [contractData, setContractData] = useState<any>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ContractForm>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<ContractForm>({
     resolver: zodResolver(contractSchema),
   });
 
@@ -45,7 +45,16 @@ export default function ContractPage() {
     }
 
     setPurchaseData(JSON.parse(storedPurchaseData));
-  }, [router]);
+    
+    // Set current date in Korean time for contract date
+    const now = new Date();
+    const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
+    const year = koreanTime.getFullYear();
+    const month = String(koreanTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreanTime.getDate()).padStart(2, '0');
+    const contractDateStr = `${year}년 ${month}월 ${day}일`;
+    setValue('contractDate', contractDateStr);
+  }, [router, setValue]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('ko-KR', {
@@ -116,31 +125,42 @@ export default function ContractPage() {
       return;
     }
 
-    const contractData = {
-      purchaseData,
-      personalInfo: data,
-      signature,
-      timestamp: new Date().toISOString(),
+    const userData = {
+      name: data.fullName,
+      birthDate: data.birthDate,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      contractDate: data.contractDate,
+      signature: signature,
+    };
+
+    const submitData = {
+      fundingType: purchaseData.fundingTitle,
+      userData: userData,
     };
 
     try {
-      const response = await fetch('/api/contract', {
+      const response = await fetch('/api/contract/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(contractData),
+        body: JSON.stringify(submitData),
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setContractData(result);
         setShowSuccess(true);
         localStorage.removeItem('purchaseData');
         setTimeout(() => {
           router.push('/dashboard');
-        }, 3000);
+        }, 5000);
       } else {
-        alert('계약 제출에 실패했습니다. 다시 시도해주세요.');
+        alert(result.message || '계약 제출에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
       alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
@@ -160,21 +180,34 @@ export default function ContractPage() {
 
   if (showSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">
-          <div className="text-green-600 text-6xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">계약이 성공적으로 체결되었습니다!</h2>
-          <p className="text-gray-600 mb-4">
-            투자가 완료되었으며 계약이 체결되었습니다. 곧 대시보드로 이동합니다.
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-8 text-center max-w-lg w-full">
+          <div className="text-green-400 text-6xl mb-6">✓</div>
+          <h2 className="text-3xl font-bold text-white mb-6">계약이 성공적으로 체결되었습니다!</h2>
+          
+          {contractData && (
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 mb-6 text-left">
+              <h3 className="text-lg font-semibold text-white mb-4">계약 정보</h3>
+              <div className="space-y-2 text-sm text-gray-200">
+                <p><span className="font-medium">계약 번호:</span> {contractData.contractId}</p>
+                <p><span className="font-medium">투자 상품:</span> {purchaseData.fundingTitle}</p>
+                <p><span className="font-medium">투자 금액:</span> {formatPrice(purchaseData.price)}</p>
+                <p><span className="font-medium">계약 완료 시간:</span> {new Date().toLocaleString('ko-KR')}</p>
+              </div>
+            </div>
+          )}
+          
+          <p className="text-gray-300 mb-6">
+            투자조합 계약이 체결되었습니다. 곧 대시보드로 이동합니다.
           </p>
-          <div className="animate-pulse text-indigo-600">이동 중...</div>
+          <div className="animate-pulse text-indigo-300 text-lg font-medium">5초 후 자동 이동...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
       {/* Header */}
       <header className="bg-black bg-opacity-50 backdrop-blur-sm shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -334,117 +367,103 @@ export default function ContractPage() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
                         성명
                       </label>
                       <input
                         {...register('fullName')}
                         type="text"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm placeholder-gray-400"
                         placeholder="성명을 입력하세요"
                       />
                       {errors.fullName && (
-                        <p className="mt-2 text-sm text-red-600">{errors.fullName.message}</p>
+                        <p className="mt-2 text-sm text-red-400">{errors.fullName.message}</p>
                       )}
                     </div>
 
                     <div>
-                      <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="birthDate" className="block text-sm font-medium text-white mb-2">
                         생년월일
                       </label>
                       <input
                         {...register('birthDate')}
                         type="text"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        placeholder="예: 1990.01.01"
+                        pattern="[0-9]{8}"
+                        maxLength={8}
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm placeholder-gray-400"
+                        placeholder="예: 19900101 (숫자만 8자리)"
                       />
                       {errors.birthDate && (
-                        <p className="mt-2 text-sm text-red-600">{errors.birthDate.message}</p>
+                        <p className="mt-2 text-sm text-red-400">{errors.birthDate.message}</p>
                       )}
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                         이메일 주소
                       </label>
                       <input
                         {...register('email')}
                         type="email"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm placeholder-gray-400"
                         placeholder="이메일을 입력하세요"
                       />
                       {errors.email && (
-                        <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+                        <p className="mt-2 text-sm text-red-400">{errors.email.message}</p>
                       )}
                     </div>
 
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                         전화번호
                       </label>
                       <input
                         {...register('phone')}
                         type="tel"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm placeholder-gray-400"
                         placeholder="전화번호를 입력하세요"
                       />
                       {errors.phone && (
-                        <p className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
+                        <p className="mt-2 text-sm text-red-400">{errors.phone.message}</p>
                       )}
                     </div>
 
                     <div className="md:col-span-2">
-                      <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="address" className="block text-sm font-medium text-white mb-2">
                         주소
                       </label>
                       <input
                         {...register('address')}
                         type="text"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm placeholder-gray-400"
                         placeholder="주소를 입력하세요"
                       />
                       {errors.address && (
-                        <p className="mt-2 text-sm text-red-600">{errors.address.message}</p>
+                        <p className="mt-2 text-sm text-red-400">{errors.address.message}</p>
                       )}
                     </div>
                   </div>
 
                   {/* Contract Date Section */}
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="text-sm font-medium text-gray-700 mb-4">계약 체결일</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="contractMonth" className="block text-sm font-medium text-gray-700">
-                          계약 월
-                        </label>
-                        <input
-                          {...register('contractMonth')}
-                          type="text"
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                          placeholder="예: 01"
-                        />
-                        {errors.contractMonth && (
-                          <p className="mt-2 text-sm text-red-600">{errors.contractMonth.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="contractDay" className="block text-sm font-medium text-gray-700">
-                          계약 일
-                        </label>
-                        <input
-                          {...register('contractDay')}
-                          type="text"
-                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                          placeholder="예: 15"
-                        />
-                        {errors.contractDay && (
-                          <p className="mt-2 text-sm text-red-600">{errors.contractDay.message}</p>
-                        )}
-                      </div>
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+                    <h4 className="text-sm font-medium text-white mb-4">계약 체결일</h4>
+                    <div>
+                      <label htmlFor="contractDate" className="block text-sm font-medium text-white mb-2">
+                        계약일
+                      </label>
+                      <input
+                        {...register('contractDate')}
+                        type="text"
+                        readOnly
+                        className="block w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent sm:text-sm"
+                        placeholder="자동으로 설정됩니다"
+                      />
+                      {errors.contractDate && (
+                        <p className="mt-2 text-sm text-red-400">{errors.contractDate.message}</p>
+                      )}
                     </div>
-                    <p className="mt-2 text-xs text-gray-500">
-                      * 계약 체결일은 2025년 {new Date().getMonth() + 1}월 ○일로 기재됩니다.
+                    <p className="mt-2 text-xs text-gray-300">
+                      * 계약 체결일은 한국 시간 기준으로 자동 설정됩니다.
                     </p>
                   </div>
 
@@ -459,30 +478,30 @@ export default function ContractPage() {
                         />
                       </div>
                       <div className="ml-3 text-sm">
-                        <label htmlFor="agreeToTerms" className="font-medium text-gray-700">
+                        <label htmlFor="agreeToTerms" className="font-medium text-white">
                           투자조합 계약 약관에 동의합니다
                         </label>
-                        <p className="text-gray-500">
+                        <p className="text-gray-300">
                           이 체크박스를 선택함으로써 위의 49인 이하 투자조합 계약서의 모든 조항을 읽고 이해했으며, 이에 동의함을 확인합니다.
                         </p>
                       </div>
                     </div>
                     {errors.agreeToTerms && (
-                      <p className="mt-2 text-sm text-red-600">{errors.agreeToTerms.message}</p>
+                      <p className="mt-2 text-sm text-red-400">{errors.agreeToTerms.message}</p>
                     )}
                   </div>
 
                   {/* Electronic Signature */}
                   <div className="mt-8">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <label className="block text-sm font-medium text-white mb-3">
                       전자서명
                     </label>
-                    <div className="border border-gray-300 rounded-md p-4">
-                      <p className="text-sm text-gray-600 mb-4">
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+                      <p className="text-sm text-gray-300 mb-4">
                         아래 서명 패드에 손가락이나 마우스로 서명해주세요:
                       </p>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm text-gray-500">서명 패드</span>
+                        <span className="text-sm text-gray-300">서명 패드</span>
                         <button
                           type="button"
                           onClick={clearSignature}
@@ -495,7 +514,7 @@ export default function ContractPage() {
                         ref={canvasRef}
                         width={400}
                         height={150}
-                        className="border border-gray-200 rounded w-full cursor-crosshair"
+                        className="border border-white/20 rounded-lg w-full cursor-crosshair bg-white"
                         style={{ touchAction: 'none' }}
                         onMouseDown={startDrawing}
                         onMouseMove={draw}
@@ -506,7 +525,7 @@ export default function ContractPage() {
                         onTouchEnd={stopDrawing}
                       />
                       {!signature && (
-                        <p className="text-sm text-red-600 mt-2">서명이 필요합니다</p>
+                        <p className="text-sm text-red-400 mt-2">서명이 필요합니다</p>
                       )}
                     </div>
                   </div>
@@ -517,7 +536,7 @@ export default function ContractPage() {
                       type="submit"
                       className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-md text-lg font-medium transition-colors duration-200"
                     >
-                      투자조합 계약 체결 및 투자 완료
+                      투자조합 계약 체결
                     </button>
                   </div>
                 </form>
