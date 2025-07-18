@@ -10,10 +10,12 @@ const loginSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  console.log('Login API called');
   try {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
+    console.log('Finding user:', email);
     // Find user
     const user = await UserService.findByEmail(email);
     if (!user) {
@@ -53,6 +55,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error('Login error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { message: 'Invalid input', errors: error.errors },
@@ -61,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: 'Internal server error', error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
