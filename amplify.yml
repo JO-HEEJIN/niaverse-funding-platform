@@ -11,6 +11,8 @@ frontend:
         - npm ci
         - echo "Installing PostgreSQL client..."
         - npm install pg @types/pg
+        - echo "Installing Chromium for Puppeteer..."
+        - apt-get update && apt-get install -y chromium-browser
     build:
       commands:
         - echo "Building Next.js application..."

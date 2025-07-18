@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { PurchaseService } from '@/lib/db/purchaseService';
 import * as nodemailer from 'nodemailer';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 export async function POST(request: NextRequest) {
   try {
@@ -188,7 +188,8 @@ async function generatePDF(html: string): Promise<Buffer> {
   try {
     browser = await puppeteer.launch({
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: '/usr/bin/chromium-browser',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
     });
     
     const page = await browser.newPage();
