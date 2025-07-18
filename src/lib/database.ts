@@ -1,5 +1,6 @@
 // Database configuration for AWS deployment
 import { Pool } from 'pg';
+import { getDatabaseUrl } from './db-config';
 
 // Parse connection string and handle SSL properly
 const parseConnectionString = (url: string) => {
@@ -7,15 +8,16 @@ const parseConnectionString = (url: string) => {
   return url.replace(/[?&]ssl=true/g, '');
 };
 
-// For development, use local connection
-// For production, use RDS connection string
+// Get database URL from config
+const databaseUrl = getDatabaseUrl();
+
 // Debug logging
-console.log('Database URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+console.log('Database URL:', databaseUrl ? 'Set' : 'Not set');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 const pool = new Pool({
-  connectionString: parseConnectionString(process.env.DATABASE_URL || 'postgresql://localhost:5432/niaverse'),
-  ssl: process.env.DATABASE_URL && process.env.NODE_ENV === 'production' ? { 
+  connectionString: parseConnectionString(databaseUrl),
+  ssl: process.env.NODE_ENV === 'production' ? { 
     rejectUnauthorized: false,
     // AWS RDS requires SSL
     require: true
