@@ -9,6 +9,10 @@ const parseConnectionString = (url: string) => {
 
 // For development, use local connection
 // For production, use RDS connection string
+// Debug logging
+console.log('Database URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 const pool = new Pool({
   connectionString: parseConnectionString(process.env.DATABASE_URL || 'postgresql://localhost:5432/niaverse'),
   ssl: process.env.DATABASE_URL && process.env.NODE_ENV === 'production' ? { 

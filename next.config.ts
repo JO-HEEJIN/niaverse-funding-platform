@@ -9,11 +9,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   // Amplify 호환성을 위한 설정
-  trailingSlash: true,
   images: {
     unoptimized: true,
   },
-  output: 'standalone',
+  // API routes를 위해 제거
+  // trailingSlash: true,
+  // output: 'standalone',
 };
 
 export default nextConfig;
