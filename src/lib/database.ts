@@ -1,16 +1,21 @@
 // Database configuration for AWS deployment
 import { Pool } from 'pg';
 
-// Clean the connection string to remove SSL parameters
-const cleanConnectionString = (url: string) => {
-  return url.replace('?sslmode=require&ssl=true', '');
+// Parse connection string and handle SSL properly
+const parseConnectionString = (url: string) => {
+  // Remove duplicate SSL parameters if any
+  return url.replace(/[?&]ssl=true/g, '');
 };
 
 // For development, use local connection
 // For production, use RDS connection string
 const pool = new Pool({
-  connectionString: cleanConnectionString(process.env.DATABASE_URL || 'postgresql://localhost:5432/niaverse'),
-  ssl: process.env.DATABASE_URL && process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  connectionString: parseConnectionString(process.env.DATABASE_URL || 'postgresql://localhost:5432/niaverse'),
+  ssl: process.env.DATABASE_URL && process.env.NODE_ENV === 'production' ? { 
+    rejectUnauthorized: false,
+    // AWS RDS requires SSL
+    require: true
+  } : false,
 });
 
 export default pool;
