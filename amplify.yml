@@ -11,8 +11,6 @@ frontend:
         - npm install --legacy-peer-deps
         - echo "Installing PostgreSQL client..."
         - npm install pg @types/pg
-        - echo "Installing Chromium for Puppeteer..."
-        - yum install -y chromium
     build:
       commands:
         - echo "Building Next.js application..."
