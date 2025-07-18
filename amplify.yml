@@ -8,7 +8,7 @@ frontend:
         - echo "NPM version:"
         - npm --version
         - echo "Installing dependencies..."
-        - npm ci
+        - npm install --legacy-peer-deps
         - echo "Installing PostgreSQL client..."
         - npm install pg @types/pg
         - echo "Installing Chromium for Puppeteer..."
