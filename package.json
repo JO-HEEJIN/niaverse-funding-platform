@@ -26,6 +26,8 @@
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
     "puppeteer": "^24.14.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -42,10 +44,8 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "autoprefixer": "^10.4.20",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
-    "postcss": "^8.4.49",
     "tsx": "^4.20.3"
   }
 }
