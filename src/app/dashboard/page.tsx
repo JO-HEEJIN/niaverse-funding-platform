@@ -233,22 +233,22 @@ export default function DashboardPage() {
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-white mb-6">Your Investments</h2>
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {userPurchases['1'] && (
+                {userPurchases['funding-1'] && (
                   <DogecoinProduct 
-                    purchases={userPurchases['1'].purchases}
-                    totalIncome={userPurchases['1'].totalIncome}
+                    purchases={userPurchases['funding-1'].purchases}
+                    totalIncome={userPurchases['funding-1'].totalIncome}
                   />
                 )}
-                {userPurchases['2'] && (
+                {userPurchases['funding-2'] && (
                   <DataCenterProduct 
-                    purchases={userPurchases['2'].purchases}
-                    totalIncome={userPurchases['2'].totalIncome}
+                    purchases={userPurchases['funding-2'].purchases}
+                    totalIncome={userPurchases['funding-2'].totalIncome}
                   />
                 )}
-                {userPurchases['3'] && (
+                {userPurchases['funding-3'] && (
                   <VASTcoinProduct 
-                    purchases={userPurchases['3'].purchases}
-                    totalIncome={userPurchases['3'].totalIncome}
+                    purchases={userPurchases['funding-3'].purchases}
+                    totalIncome={userPurchases['funding-3'].totalIncome}
                   />
                 )}
               </div>

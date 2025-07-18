@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { databaseService } from '@/lib/db/service';
+import { PurchaseService } from '@/lib/db/purchaseService';
 import { fundingOptions } from '@/lib/fundingData';
 
 export async function GET(request: NextRequest) {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const purchases = await databaseService.findPurchasesByUserId(parseInt(decoded.userId));
+    const purchases = await PurchaseService.findByUserId(decoded.userId);
     
     // Add funding details to each purchase
     const purchasesWithDetails = purchases.map((purchase: Record<string, any>) => {

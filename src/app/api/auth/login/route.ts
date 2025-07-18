@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-import { databaseService } from '@/lib/db/service';
+import { UserService } from '@/lib/db/userService';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = loginSchema.parse(body);
 
     // Find user
-    const user = await databaseService.findUserByEmail(email);
+    const user = await UserService.findByEmail(email);
     if (!user) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check password
-    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id.toString(), email: user.email },
+      { userId: user.id, email: user.email },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       { 
         token,
         user: {
-          id: user.id.toString(),
+          id: user.id,
           email: user.email,
           name: user.name,
         }

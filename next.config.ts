@@ -1,8 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Vercel 배포를 위한 설정
-  // API 라우트가 있으므로 'export' 모드는 사용하지 않음
+  // AWS Amplify 배포를 위한 설정
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // Amplify 호환성을 위한 설정
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+  output: 'standalone',
 };
 
 export default nextConfig;

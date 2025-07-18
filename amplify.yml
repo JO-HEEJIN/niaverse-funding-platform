@@ -3,11 +3,17 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Node.js version:"
+        - node --version
+        - echo "NPM version:"
+        - npm --version
         - echo "Installing dependencies..."
         - npm ci
+        - echo "Installing PostgreSQL client..."
+        - npm install pg @types/pg
     build:
       commands:
-        - echo "Building application..."
+        - echo "Building Next.js application..."
         - npm run build
   artifacts:
     baseDirectory: .next
@@ -17,9 +23,3 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
-  buildSettings:
-    commands:
-      - echo "Build settings configured"
-    environment:
-      - NODE_ENV: production
-      - NEXT_TELEMETRY_DISABLED: 1

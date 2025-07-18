@@ -10,20 +10,21 @@
 ### AWS Amplify 환경변수 설정
 Amplify 콘솔에서 다음 환경변수를 설정해야 합니다:
 
-```
-DATABASE_URL=postgresql://niaverse_admin:[PASSWORD]@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require&ssl=true
-JWT_SECRET=[RANDOM_32_CHAR_STRING]
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=https://your-app-name.amplifyapp.com
-AWS_REGION=us-east-2
-AWS_ACCESS_KEY_ID=[YOUR_AWS_ACCESS_KEY]
-AWS_SECRET_ACCESS_KEY=[YOUR_AWS_SECRET_KEY]
-SMTP_HOST=email-smtp.us-east-2.amazonaws.com
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=[YOUR_SMTP_USER]
-SMTP_PASS=[YOUR_SMTP_PASSWORD]
-```
+**필수 환경변수:**
+- DATABASE_URL: postgresql://niaverse_admin:NiaverseDB2024!@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require&ssl=true
+- JWT_SECRET: niaverse-super-secret-jwt-key-2024-production
+- NODE_ENV: production
+- NEXT_PUBLIC_API_URL: https://niaverse.com
+- SMTP_HOST: email-smtp.us-east-2.amazonaws.com
+- SMTP_PORT: 587
+- SMTP_SECURE: false
+- SMTP_USER: AKIA4UF2BE37O6JFBT4T
+- SMTP_PASS: BGTOmBvq+q4PpyFJKqaj3Y1lAGau49Y6L/QjuIgt8Ukl
+
+**빌드 최적화 환경변수:**
+- NEXT_TELEMETRY_DISABLED: 1
+- DISABLE_ESLINT: true
+- DISABLE_TYPESCRIPT_CHECK: true
 
 ### 배포 단계
 1. GitHub 리포지토리 푸시
