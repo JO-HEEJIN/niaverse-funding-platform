@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { password, phone, address } = body;
+    const { password, phone } = body;
 
     // Validate input
     if (phone && !/^[0-9-+\s()]+$/.test(phone)) {
@@ -59,10 +59,6 @@ export async function PUT(request: NextRequest) {
     
     if (phone !== undefined) {
       updateData.phone = phone.trim();
-    }
-    
-    if (address !== undefined) {
-      updateData.address = address.trim();
     }
 
     // Update user

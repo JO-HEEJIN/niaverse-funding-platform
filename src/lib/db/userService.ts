@@ -75,7 +75,7 @@ export class UserService {
     }
   }
 
-  static async updateUser(id: string, updateData: { password?: string; phone?: string; address?: string }): Promise<boolean> {
+  static async updateUser(id: string, updateData: { password?: string; phone?: string }): Promise<boolean> {
     const client = await pool.connect();
     try {
       const setClauses = [];
@@ -94,8 +94,6 @@ export class UserService {
         paramIndex++;
       }
 
-      // Skip address field for now since it doesn't exist in the table
-      // TODO: Add address column to users table if needed
 
       if (setClauses.length === 0) {
         return true; // Nothing to update

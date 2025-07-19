@@ -9,7 +9,6 @@ interface UserInfo {
   email: string;
   name: string;
   phone?: string;
-  address?: string;
 }
 
 export default function MyInfoPage() {
@@ -17,8 +16,7 @@ export default function MyInfoPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     password: '',
-    phone: '',
-    address: ''
+    phone: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -46,8 +44,7 @@ export default function MyInfoPage() {
         setUser(userData);
         setFormData({
           password: '',
-          phone: userData.phone || '',
-          address: userData.address || ''
+          phone: userData.phone || ''
         });
       } else {
         router.push('/login');
@@ -73,8 +70,7 @@ export default function MyInfoPage() {
     try {
       const token = localStorage.getItem('token');
       const updateData: any = {
-        phone: formData.phone,
-        address: formData.address
+        phone: formData.phone
       };
 
       // Only include password if it's not empty
@@ -308,20 +304,6 @@ export default function MyInfoPage() {
                   />
                 </div>
 
-                {/* 주소 (수정 가능) */}
-                <div className="form-group">
-                  <label className="block text-gray-300 text-sm font-medium mb-2">
-                    주소
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="서울시 강남구 테헤란로 123"
-                    className="editable-input w-full px-4 py-3 rounded-lg border border-gray-500/30 bg-gray-800/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  />
-                </div>
 
                 {/* 수정 버튼 */}
                 <button
