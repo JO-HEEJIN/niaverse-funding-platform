@@ -45,24 +45,34 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    const userId = parseInt(decoded.userId);
-    console.log('Admin check - parsed userId:', userId);
-    
-    if (isNaN(userId)) {
-      return NextResponse.json(
-        { 
-          message: 'Forbidden - Invalid userId format', 
-          debug: { 
-            originalUserId: decoded.userId,
-            parsedUserId: userId,
-            isNaN: isNaN(userId)
-          } 
-        },
-        { status: 403 }
-      );
+    // Handle both string and numeric user IDs
+    let user;
+    if (decoded.userId.toString().startsWith('admin_')) {
+      // For admin users with string IDs, find by email instead
+      user = await UserService.findByEmail(decoded.email);
+      console.log('Admin check - found user by email:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
+    } else {
+      // For regular users with numeric IDs
+      const userId = parseInt(decoded.userId);
+      console.log('Admin check - parsed userId:', userId);
+      
+      if (isNaN(userId)) {
+        return NextResponse.json(
+          { 
+            message: 'Forbidden - Invalid userId format', 
+            debug: { 
+              originalUserId: decoded.userId,
+              parsedUserId: userId,
+              isNaN: isNaN(userId)
+            } 
+          },
+          { status: 403 }
+        );
+      }
+      
+      user = await UserService.findById(userId);
+      console.log('Admin check - found user by ID:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
     }
-    
-    const user = await UserService.findById(userId);
     console.log('Admin check - found user:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
     
     if (!user?.isAdmin) {
@@ -131,7 +141,22 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Check if user is admin
-    const user = await UserService.findById(parseInt(decoded.userId));
+    let user;
+    if (decoded.userId.toString().startsWith('admin_')) {
+      // For admin users with string IDs, find by email instead
+      user = await UserService.findByEmail(decoded.email);
+    } else {
+      // For regular users with numeric IDs
+      const userId = parseInt(decoded.userId);
+      if (isNaN(userId)) {
+        return NextResponse.json(
+          { message: 'Forbidden - Invalid userId format' },
+          { status: 403 }
+        );
+      }
+      user = await UserService.findById(userId);
+    }
+    
     if (!user?.isAdmin) {
       return NextResponse.json(
         { message: 'Forbidden - Admin access required' },
