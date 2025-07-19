@@ -116,4 +116,21 @@ export class PurchaseService {
       client.release();
     }
   }
+
+  static async getByUserId(userId: string): Promise<Purchase[]> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT id, user_id as "userId", funding_id as "fundingId", quantity, price, contract_signed as "contractSigned", contract_data as "contractData", accumulated_income as "accumulatedIncome", last_income_update as "lastIncomeUpdate", approved, approved_at as "approvedAt", approved_by as "approvedBy", created_at as timestamp FROM purchases WHERE user_id = $1 ORDER BY created_at DESC',
+        [userId]
+      );
+      return result.rows.map(row => ({
+        ...row,
+        timestamp: new Date(row.timestamp),
+        lastIncomeUpdate: row.lastIncomeUpdate ? new Date(row.lastIncomeUpdate) : null
+      }));
+    } finally {
+      client.release();
+    }
+  }
 }

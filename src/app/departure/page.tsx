@@ -17,6 +17,7 @@ interface Purchase {
   lastIncomeUpdate: Date;
   fundingTitle: string;
   fundingUnit: string;
+  approved: boolean;
 }
 
 interface FundingIncome {
@@ -66,9 +67,9 @@ export default function DeparturePage() {
       const purchases: Purchase[] = await response.json();
       
       const incomeByFunding = purchases.reduce((acc, purchase) => {
-        if (!purchase.contractSigned) return acc;
+        if (!purchase.contractSigned || !purchase.approved) return acc;
         
-        const funding = fundingOptions.find(f => f.id === purchase.fundingId);
+        const funding = fundingOptions.find(f => `funding-${f.id}` === purchase.fundingId);
         if (!funding) return acc;
 
         if (!acc[purchase.fundingId]) {
