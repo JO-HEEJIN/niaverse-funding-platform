@@ -73,26 +73,45 @@ export async function POST(request: NextRequest) {
       signature,
     });
 
-    // PDF 생성 (Puppeteer가 설치되지 않은 경우 건너뛰기)
+    // PDF 생성 또는 HTML 이메일 전송
     let pdfBuffer: Buffer | null = null;
+    let emailSent = false;
+    
     try {
+      // PDF 생성 시도
       pdfBuffer = await generatePDF(contractHtml);
+      console.log('PDF 생성 성공');
     } catch (pdfError) {
       console.error('PDF 생성 실패:', pdfError);
-      // PDF 생성 실패해도 계약은 진행
+      // PDF 생성 실패 시 HTML 이메일로 대체
     }
 
-    // 이메일 전송 (에러 발생 시에도 계약은 저장되도록 try-catch 처리)
+    // 이메일 전송 시도
     try {
-      if (process.env.SMTP_USER && process.env.SMTP_PASS && pdfBuffer) {
-        await sendEmailWithPDF(pdfBuffer, {
-          fundingType,
-          name,
-          email,
-          contractId,
-        });
+      if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+        if (pdfBuffer && pdfBuffer.length > 0) {
+          // PDF가 있으면 PDF 첨부해서 전송
+          await sendEmailWithPDF(pdfBuffer, {
+            fundingType,
+            name,
+            email,
+            contractId,
+          });
+          console.log('PDF 첨부 이메일 전송 성공');
+        } else {
+          // PDF가 없으면 HTML만 전송
+          await sendHTMLEmail({
+            fundingType,
+            name,
+            email,
+            contractId,
+            html: contractHtml,
+          });
+          console.log('HTML 이메일 전송 성공');
+        }
+        emailSent = true;
       } else {
-        console.log('SMTP 설정이 없거나 PDF 생성 실패로 이메일 전송을 건너뜁니다.');
+        console.log('SMTP 설정이 없어서 이메일 전송을 건너뜁니다.');
       }
     } catch (emailError) {
       console.error('이메일 전송 오류:', emailError);
@@ -186,26 +205,60 @@ function generateContractHtml(data: Record<string, any>): string {
 async function generatePDF(html: string): Promise<Buffer> {
   let browser;
   try {
+    console.log('Starting PDF generation...');
+    
     browser = await puppeteer.launch({
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-dev-shm-usage',
+        '--disable-web-security',
+        '--disable-gpu',
+        '--single-process',
+        '--no-zygote'
+      ],
     });
     
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    console.log('Browser launched successfully');
     
+    const page = await browser.newPage();
+    
+    // Set viewport for better rendering
+    await page.setViewport({ width: 1200, height: 1600 });
+    
+    console.log('Setting page content...');
+    await page.setContent(html, { 
+      waitUntil: 'networkidle0',
+      timeout: 30000 
+    });
+    
+    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
+      preferCSSPageSize: false,
     });
     
     await browser.close();
+    console.log('PDF generated successfully, size:', pdfBuffer.length);
+    
+    if (pdfBuffer.length === 0) {
+      throw new Error('Generated PDF buffer is empty');
+    }
+    
     return Buffer.from(pdfBuffer);
   } catch (error) {
     console.error('PDF 생성 오류:', error);
-    if (browser) await browser.close();
-    return Buffer.from('');
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error('Browser close error:', closeError);
+      }
+    }
+    throw error; // Re-throw error instead of returning empty buffer
   }
 }
 
@@ -241,6 +294,41 @@ async function sendEmailWithPDF(pdfBuffer: Buffer, data: Record<string, any>) {
         contentType: 'application/pdf',
       },
     ],
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+async function sendHTMLEmail(data: Record<string, any>) {
+  const { fundingType, name, email, contractId, html } = data;
+  
+  const transporter = nodemailer.createTransport({
+    host: 'email-smtp.us-east-2.amazonaws.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+  
+  const mailOptions = {
+    from: 'master@niaverse.org',
+    to: 'master@niaverse.org',
+    subject: `[NIA Cloud] ${fundingType} 투자계약서 - ${name} (HTML)`,
+    html: `
+      <div style="padding: 20px; background-color: #f5f5f5;">
+        <h2>NIA Cloud 투자조합 계약서</h2>
+        <p><strong>계약자:</strong> ${name}</p>
+        <p><strong>펀딩 타입:</strong> ${fundingType}</p>
+        <p><strong>계약 번호:</strong> ${contractId}</p>
+        <p><strong>계약자 이메일:</strong> ${email}</p>
+        <p><strong>계약 일시:</strong> ${new Date().toLocaleString('ko-KR')}</p>
+        <p><strong>참고:</strong> PDF 생성에 실패하여 HTML 버전으로 전송됩니다.</p>
+        <hr>
+        ${html}
+      </div>
+    `,
   };
 
   await transporter.sendMail(mailOptions);
