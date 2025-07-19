@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { fileStorage } from '@/lib/fileStorage';
+import { WithdrawalService } from '@/lib/db/withdrawalService';
+import { UserService } from '@/lib/db/userService';
 import { fundingOptions } from '@/lib/fundingData';
 
 export async function GET(request: NextRequest) {
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user is admin
-    const user = fileStorage.findUserById(decoded.userId);
+    const user = await UserService.findById(parseInt(decoded.userId));
     if (!user?.isAdmin) {
       return NextResponse.json(
         { message: 'Forbidden - Admin access required' },
@@ -36,19 +37,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const withdrawals = fileStorage.getAllWithdrawals();
+    const withdrawals = await WithdrawalService.getAll();
     
     // Add user and funding details to each withdrawal
-    const withdrawalsWithDetails = withdrawals.map(withdrawal => {
-      const user = fileStorage.findUserById(withdrawal.userId);
-      const funding = fundingOptions.find(f => f.id === withdrawal.fundingId);
+    const withdrawalsWithDetails = await Promise.all(withdrawals.map(async (withdrawal) => {
+      const user = await UserService.findById(withdrawal.userId);
+      const funding = fundingOptions.find(f => `funding-${f.id}` === withdrawal.fundingId);
       return {
         ...withdrawal,
         userName: user?.name || 'Unknown User',
         fundingTitle: funding?.title || 'Unknown Funding',
         fundingUnit: funding?.unit || 'Won'
       };
-    });
+    }));
 
     return NextResponse.json(withdrawalsWithDetails);
   } catch (error) {
@@ -85,7 +86,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Check if user is admin
-    const user = fileStorage.findUserById(decoded.userId);
+    const user = await UserService.findById(parseInt(decoded.userId));
     if (!user?.isAdmin) {
       return NextResponse.json(
         { message: 'Forbidden - Admin access required' },
@@ -102,7 +103,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const success = fileStorage.updateWithdrawalStatus(withdrawalId, status, adminNotes);
+    const success = await WithdrawalService.updateStatus(parseInt(withdrawalId), status, adminNotes);
 
     if (success) {
       return NextResponse.json({
