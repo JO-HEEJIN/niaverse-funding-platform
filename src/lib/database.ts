@@ -14,6 +14,14 @@ const databaseUrl = getDatabaseUrl();
 // Debug logging
 console.log('Database URL:', databaseUrl ? 'Set' : 'Not set');
 console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL env var:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+if (databaseUrl) {
+  // Log without credentials
+  const urlParts = databaseUrl.split('@');
+  if (urlParts.length > 1) {
+    console.log('Database host:', urlParts[1]);
+  }
+}
 
 const pool = new Pool({
   connectionString: parseConnectionString(databaseUrl),
@@ -22,6 +30,11 @@ const pool = new Pool({
     // AWS RDS requires SSL
     require: true
   } : false,
+});
+
+// Add error handler for connection issues
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
 });
 
 export default pool;

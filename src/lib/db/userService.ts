@@ -5,11 +5,16 @@ export class UserService {
   static async findByEmail(email: string): Promise<User | null> {
     const client = await pool.connect();
     try {
+      console.log('UserService.findByEmail called for:', email);
       const result = await client.query(
         'SELECT id, email, password_hash as password, name, phone, address, confirmed, is_admin as "isAdmin" FROM users WHERE email = $1',
         [email]
       );
+      console.log('Query result:', result.rows.length > 0 ? 'User found' : 'User not found');
       return result.rows[0] || null;
+    } catch (error) {
+      console.error('UserService.findByEmail error:', error);
+      throw error;
     } finally {
       client.release();
     }
@@ -18,11 +23,16 @@ export class UserService {
   static async findById(id: string): Promise<User | null> {
     const client = await pool.connect();
     try {
+      console.log('UserService.findById called for:', id);
       const result = await client.query(
         'SELECT id, email, password_hash as password, name, phone, address, confirmed, is_admin as "isAdmin" FROM users WHERE id = $1',
         [id]
       );
+      console.log('Query result:', result.rows.length > 0 ? 'User found' : 'User not found');
       return result.rows[0] || null;
+    } catch (error) {
+      console.error('UserService.findById error:', error);
+      throw error;
     } finally {
       client.release();
     }
