@@ -10,11 +10,13 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.11.2",
     "@hookform/resolvers": "^5.1.1",
+    "@sparticuz/chromium": "^138.0.1",
     "@types/pg": "^8.15.4",
     "autoprefixer": "^10.4.21",
     "aws-amplify": "^6.15.3",
