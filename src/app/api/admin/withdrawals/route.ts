@@ -29,9 +29,38 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user is admin
+    console.log('Admin check - decoded object:', decoded);
     console.log('Admin check - decoded.userId:', decoded.userId, 'type:', typeof decoded.userId);
+    
+    if (!decoded.userId) {
+      return NextResponse.json(
+        { 
+          message: 'Forbidden - No userId in token', 
+          debug: { 
+            decodedToken: decoded,
+            hasUserId: !!decoded.userId
+          } 
+        },
+        { status: 403 }
+      );
+    }
+    
     const userId = parseInt(decoded.userId);
     console.log('Admin check - parsed userId:', userId);
+    
+    if (isNaN(userId)) {
+      return NextResponse.json(
+        { 
+          message: 'Forbidden - Invalid userId format', 
+          debug: { 
+            originalUserId: decoded.userId,
+            parsedUserId: userId,
+            isNaN: isNaN(userId)
+          } 
+        },
+        { status: 403 }
+      );
+    }
     
     const user = await UserService.findById(userId);
     console.log('Admin check - found user:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
