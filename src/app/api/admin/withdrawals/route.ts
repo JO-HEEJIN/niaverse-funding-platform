@@ -38,7 +38,17 @@ export async function GET(request: NextRequest) {
     
     if (!user?.isAdmin) {
       return NextResponse.json(
-        { message: 'Forbidden - Admin access required', debug: { userId, foundUser: !!user, isAdmin: user?.isAdmin } },
+        { 
+          message: 'Forbidden - Admin access required', 
+          debug: { 
+            userId, 
+            parsedUserId: parseInt(decoded.userId),
+            foundUser: !!user, 
+            isAdmin: user?.isAdmin,
+            userDetails: user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : null,
+            decodedToken: { userId: decoded.userId, email: decoded.email }
+          } 
+        },
         { status: 403 }
       );
     }
