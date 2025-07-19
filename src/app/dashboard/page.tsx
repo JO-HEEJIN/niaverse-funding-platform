@@ -7,6 +7,7 @@ import { fundingOptions } from '@/lib/fundingData';
 import DogecoinProduct from '@/components/products/DogecoinProduct';
 import DataCenterProduct from '@/components/products/DataCenterProduct';
 import VASTcoinProduct from '@/components/products/VASTcoinProduct';
+import { formatPrice } from '@/lib/formatters';
 
 interface Purchase {
   id: string;
@@ -146,12 +147,7 @@ export default function DashboardPage() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW',
-    }).format(price);
-  };
+  // formatPrice is now imported from formatters
 
   const getProgressPercentage = (raised: number, goal: number) => {
     return Math.min((raised / goal) * 100, 100);

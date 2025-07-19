@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       accumulatedIncome: 0,
       lastIncomeUpdate: new Date(),
       fundingTitle: defaultPurchaseData.fundingTitle,
-      fundingUnit: fundingType === '펀딩 I' ? 'Doji' : 
+      fundingUnit: fundingType === '펀딩 I' ? 'Doge' : 
                    fundingType === '펀딩 II' ? 'Won' : 'VAST',
     };
 

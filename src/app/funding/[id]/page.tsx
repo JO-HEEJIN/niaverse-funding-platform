@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { fundingOptions } from '@/lib/fundingData';
 import type { FundingOption } from '@/lib/fundingData';
+import { formatPrice, parseCustomPrice } from '@/lib/formatters';
 
 interface FundingPageProps {
   params: Promise<{
@@ -34,12 +35,7 @@ export default function FundingPage({ params }: FundingPageProps) {
     }
   }, [id, router]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW',
-    }).format(price);
-  };
+  // formatPrice is now imported from formatters
 
   const getProgressPercentage = (raised: number, goal: number) => {
     return Math.min((raised / goal) * 100, 100);
@@ -75,7 +71,7 @@ export default function FundingPage({ params }: FundingPageProps) {
       return;
     }
     
-    const finalPrice = customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) : getPriceForQuantity(selectedQuantity);
+    const finalPrice = customPrice ? parseCustomPrice(customPrice) : getPriceForQuantity(selectedQuantity);
     
     // Store purchase data for contract
     const purchaseData = {
@@ -355,65 +351,112 @@ export default function FundingPage({ params }: FundingPageProps) {
                     <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6">
                       <h4 className="text-lg font-medium text-white mb-4">구매 옵션</h4>
                       
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-white mb-2">
-                          수량 선택
-                        </label>
-                        <select
-                          value={selectedQuantity || ''}
-                          onChange={(e) => setSelectedQuantity(e.target.value ? parseInt(e.target.value) : null)}
-                          className="block w-full px-4 py-3 border border-white/20 rounded-lg shadow-lg text-white bg-white/10 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:bg-white/15"
-                        >
-                          <option value="" className="text-gray-900 bg-white">
-                            선택하세요
-                          </option>
-                          {funding.priceStructure.map((price) => (
-                            <option key={price.quantity} value={price.quantity} className="text-gray-900 bg-white">
-                              {price.quantity}개 ({(price.price / 10000).toLocaleString()}만원)
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium text-white mb-2">
-                          Custom Price (Optional)
-                        </label>
-                        <input
-                          type="text"
-                          value={customPrice}
-                          onChange={(e) => setCustomPrice(e.target.value)}
-                          placeholder="Enter custom amount"
-                          className="block w-full px-3 py-2 border border-white/30 rounded-md shadow-sm text-white bg-white/10 focus:outline-none focus:ring-purple-500 focus:border-purple-500 placeholder-white/60"
-                        />
-                        <p className="text-sm text-gray-400 mt-1">
-                          Leave empty to use standard pricing
-                        </p>
-                      </div>
-
-                      <div className="mb-6">
-                        <div className="flex justify-between items-center text-lg font-medium">
-                          <span className="text-white">Total:</span>
-                          <span className="text-indigo-400">
-                            {selectedQuantity || customPrice ? 
-                              formatPrice(customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) || 0 : getPriceForQuantity(selectedQuantity))
-                              : '수량을 선택하세요'
-                            }
-                          </span>
+                      {/* Funding 1 - Closed */}
+                      {funding.id === '1' && (
+                        <div className="text-center py-8">
+                          <div className="bg-gray-600/30 border border-gray-500/40 rounded-lg p-6">
+                            <h5 className="text-xl font-semibold text-red-400 mb-2">마감되었습니다</h5>
+                            <p className="text-gray-300 text-sm">
+                              이 펀딩은 목표 금액을 달성하여 마감되었습니다.
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <button
-                        onClick={handlePurchase}
-                        disabled={!selectedQuantity && !customPrice}
-                        className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
-                          selectedQuantity || customPrice
-                            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
-                            : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                        }`}
-                      >
-                        {selectedQuantity || customPrice ? '구매하기' : '수량을 선택하세요'}
-                      </button>
+                      {/* Funding 2 - Custom Price Only */}
+                      {funding.id === '2' && (
+                        <>
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium text-white mb-2">
+                              투자 금액 입력
+                            </label>
+                            <input
+                              type="text"
+                              value={customPrice}
+                              onChange={(e) => setCustomPrice(e.target.value)}
+                              placeholder="투자할 금액을 입력하세요 (예: 1000000)"
+                              className="block w-full px-4 py-3 border border-white/20 rounded-lg shadow-lg text-white bg-white/10 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:bg-white/15"
+                            />
+                            <p className="text-sm text-gray-400 mt-1">
+                              최소 투자 금액: ₩1,000,000
+                            </p>
+                          </div>
+
+                          <div className="mb-6">
+                            <div className="flex justify-between items-center text-lg font-medium">
+                              <span className="text-white">투자 금액:</span>
+                              <span className="text-indigo-400">
+                                {customPrice ? formatPrice(parseCustomPrice(customPrice)) : '금액을 입력하세요'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              if (!customPrice || parseCustomPrice(customPrice) < 1000000) {
+                                alert('최소 투자 금액은 100만원입니다.');
+                                return;
+                              }
+                              setSelectedQuantity(1); // Set to 1 for validation
+                              handlePurchase();
+                            }}
+                            disabled={!customPrice || parseCustomPrice(customPrice) < 1000000}
+                            className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
+                              customPrice && parseCustomPrice(customPrice) >= 1000000
+                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
+                                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                            }`}
+                          >
+                            {customPrice && parseCustomPrice(customPrice) >= 1000000 ? '투자하기' : '최소 100만원 이상 입력하세요'}
+                          </button>
+                        </>
+                      )}
+
+                      {/* Funding 3 - Quantity Selection Only */}
+                      {funding.id === '3' && (
+                        <>
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium text-white mb-2">
+                              수량 선택
+                            </label>
+                            <select
+                              value={selectedQuantity || ''}
+                              onChange={(e) => setSelectedQuantity(e.target.value ? parseInt(e.target.value) : null)}
+                              className="block w-full px-4 py-3 border border-white/20 rounded-lg shadow-lg text-white bg-white/10 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:bg-white/15"
+                            >
+                              <option value="" className="text-gray-900 bg-white">
+                                선택하세요
+                              </option>
+                              {funding.priceStructure.map((price) => (
+                                <option key={price.quantity} value={price.quantity} className="text-gray-900 bg-white">
+                                  {price.quantity} unit - {formatPrice(price.price)}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="mb-6">
+                            <div className="flex justify-between items-center text-lg font-medium">
+                              <span className="text-white">Total:</span>
+                              <span className="text-indigo-400">
+                                {selectedQuantity ? formatPrice(getPriceForQuantity(selectedQuantity)) : '수량을 선택하세요'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={handlePurchase}
+                            disabled={!selectedQuantity}
+                            className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
+                              selectedQuantity
+                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
+                                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                            }`}
+                          >
+                            {selectedQuantity ? '구매하기' : '수량을 선택하세요'}
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

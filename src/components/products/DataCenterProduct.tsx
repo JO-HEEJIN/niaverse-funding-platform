@@ -1,5 +1,6 @@
 import React from 'react';
 import { Purchase } from '@/lib/fileStorage';
+import { formatKRW } from '@/lib/formatters';
 
 interface DataCenterProductProps {
   purchases: Purchase[];
@@ -23,19 +24,19 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Amount</p>
           <p className="stat-value text-lg font-bold text-white break-all">
-            ₩{totalAmount.toLocaleString()}
+            {formatKRW(totalAmount)}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Purchase Amount</p>
           <p className="stat-value text-lg font-bold text-blue-400 break-all">
-            ₩{purchaseAmount.toLocaleString()}
+            {formatKRW(purchaseAmount)}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
           <p className="stat-value text-lg font-bold text-green-400 break-all">
-            ₩{totalIncome.toLocaleString()}
+            {formatKRW(totalIncome)}
           </p>
         </div>
       </div>
@@ -47,7 +48,7 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
         </div>
         <div className="bg-gray-900/50 rounded p-3">
           <p className="income-value text-xl sm:text-2xl font-bold text-blue-400 break-all">
-            ₩{totalIncome.toLocaleString()}.00
+            {formatKRW(totalIncome)}
           </p>
           <span className="period text-gray-400 text-sm">/Mon</span>
         </div>

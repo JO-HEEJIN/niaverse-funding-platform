@@ -4,7 +4,7 @@ export interface FundingOption {
   description: string;
   image: string;
   basePrice: number;
-  unit: 'Won' | 'Doji' | 'VAST';
+  unit: 'Won' | 'Doge' | 'VAST';
   priceStructure: {
     quantity: number;
     price: number;
@@ -27,7 +27,7 @@ export const fundingOptions: FundingOption[] = [
     description: '도지코인 채굴 사업으로 안정적인 수익을 얻으세요. 최신 NIA Cloud 기술과 친환경 에너지를 활용하여 글로벌 파트너십을 통한 안정적 수익을 제공합니다.',
     image: '/api/placeholder/400/300',
     basePrice: 1000000,
-    unit: 'Doji',
+    unit: 'Doge',
     dailyIncome: 100,
     priceStructure: [
       { quantity: 1, price: 1000000 },

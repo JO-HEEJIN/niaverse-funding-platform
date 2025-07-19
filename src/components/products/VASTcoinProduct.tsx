@@ -1,5 +1,6 @@
 import React from 'react';
 import { Purchase } from '@/lib/fileStorage';
+import { formatCoinAmount } from '@/lib/formatters';
 
 interface VASTcoinProductProps {
   purchases: Purchase[];
@@ -22,13 +23,13 @@ export default function VASTcoinProduct({ purchases, totalIncome }: VASTcoinProd
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Holdings</p>
           <p className="stat-value text-xl font-bold text-white break-all">
-            {totalQuantity} Vast
+            {formatCoinAmount(totalQuantity, 'VAST')}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Current Value</p>
           <p className="stat-value text-xl font-bold text-purple-400 break-all">
-            {totalIncome.toLocaleString()} Vast
+            {formatCoinAmount(totalIncome, 'VAST')}
           </p>
         </div>
       </div>
