@@ -12,37 +12,49 @@ const loginSchema = z.object({
 export async function POST(request: NextRequest) {
   console.log('Login API called');
   try {
+    console.log('1. Parsing request body...');
     const body = await request.json();
+    console.log('2. Validating input schema...');
     const { email, password } = loginSchema.parse(body);
 
-    console.log('Finding user:', email);
+    console.log('3. Finding user:', email);
     // Find user
     const user = await UserService.findByEmail(email);
     if (!user) {
+      console.log('4. User not found');
       return NextResponse.json(
         { message: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
+    console.log('4. User found, checking password...');
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      console.log('5. Password invalid');
       return NextResponse.json(
         { message: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
+    console.log('5. Password valid, generating JWT...');
     // Email confirmation check removed - auto-login after registration
 
     // Generate JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'secret';
+    console.log('6. JWT secret length:', jwtSecret.length);
+    
     const token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET || 'secret',
+      jwtSecret,
       { expiresIn: '7d' }
     );
+    
+    console.log('7. JWT token generated successfully');
 
+    console.log('8. Returning successful response');
     return NextResponse.json(
       { 
         token,
