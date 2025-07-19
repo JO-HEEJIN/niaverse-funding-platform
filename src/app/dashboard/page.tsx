@@ -30,7 +30,7 @@ interface UserPurchases {
 }
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; id: string } | null>(null);
   const [userPurchases, setUserPurchases] = useState<UserPurchases>({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -44,14 +44,33 @@ export default function DashboardPage() {
       return;
     }
 
-    // In a real app, you'd validate the token with the server
-    // For now, we'll just check if it exists
-    const mockUser = { name: 'User', email: 'user@example.com' };
-    setUser(mockUser);
+    // Get user info from /api/auth/me
+    fetchUserInfo(token);
     
     // Load user purchases
     loadUserPurchases(userId);
   }, [router]);
+
+  const fetchUserInfo = async (token: string) => {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        // If token is invalid, redirect to login
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      router.push('/login');
+    }
+  };
 
   const loadUserPurchases = async (userId: string) => {
     try {
@@ -93,6 +112,10 @@ export default function DashboardPage() {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     router.push('/main');
+  };
+
+  const goToMyInfo = () => {
+    router.push('/myinfo');
   };
 
   const formatPrice = (price: number) => {
@@ -160,7 +183,12 @@ export default function DashboardPage() {
                 출금
               </Link>
               <div className="w-px h-6 bg-white/30 mx-2"></div>
-              <span className="text-gray-300 text-sm">환영합니다, {user.name}</span>
+              <span 
+                className="text-gray-300 text-sm cursor-pointer hover:text-white transition-all duration-200 user-greeting"
+                onClick={goToMyInfo}
+              >
+                환영합니다, {user.name}
+              </span>
               <button
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-sm font-medium"
@@ -208,7 +236,13 @@ export default function DashboardPage() {
               >
                 출금
               </Link>
-              <div className="px-3 py-2 text-center text-gray-300 text-sm border-t border-white/20 mt-2 pt-2">
+              <div 
+                className="px-3 py-2 text-center text-gray-300 text-sm border-t border-white/20 mt-2 pt-2 cursor-pointer hover:bg-white/10 transition-all duration-200 rounded-md user-greeting"
+                onClick={() => {
+                  goToMyInfo();
+                  setIsMenuOpen(false);
+                }}
+              >
                 환영합니다, {user.name}
               </div>
               <button
