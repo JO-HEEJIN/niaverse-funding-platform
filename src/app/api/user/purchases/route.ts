@@ -29,8 +29,11 @@ export async function GET(request: NextRequest) {
 
     const purchases = await PurchaseService.findByUserId(decoded.userId);
     
+    // Filter only approved purchases
+    const approvedPurchases = purchases.filter((purchase: any) => purchase.approved === true);
+    
     // Add funding details to each purchase
-    const purchasesWithDetails = purchases.map((purchase: Record<string, any>) => {
+    const purchasesWithDetails = approvedPurchases.map((purchase: Record<string, any>) => {
       const funding = fundingOptions.find(f => f.id === purchase.fundingId);
       return {
         ...purchase,

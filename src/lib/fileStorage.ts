@@ -30,6 +30,10 @@ export interface Purchase {
   };
   accumulatedIncome: number;
   lastIncomeUpdate: Date;
+  // Approval fields
+  approved?: boolean;
+  approvedAt?: Date;
+  approvedBy?: string;
 }
 
 export interface WithdrawalRequest {
