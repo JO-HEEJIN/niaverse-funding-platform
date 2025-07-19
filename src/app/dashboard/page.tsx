@@ -76,6 +76,21 @@ export default function DashboardPage() {
   const loadUserPurchases = async (userId: string) => {
     try {
       const token = localStorage.getItem('token');
+      
+      // First, calculate income to ensure latest data
+      try {
+        await fetch('/api/income/calculate', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        // Note: We don't wait for this to complete or handle errors
+        // as it should not block the main loading
+      } catch (incomeError) {
+        console.log('Income calculation skipped:', incomeError);
+      }
+      
       const response = await fetch('/api/user/purchases', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -119,33 +134,6 @@ export default function DashboardPage() {
     router.push('/myinfo');
   };
 
-  const generateTestIncome = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/income/test-generate', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        alert(result.message);
-        // Reload user purchases to see updated income
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          loadUserPurchases(userId);
-        }
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || '수익금 생성에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('Error generating test income:', error);
-      alert('오류가 발생했습니다.');
-    }
-  };
 
   // formatPrice is now imported from formatters
 
@@ -291,12 +279,6 @@ export default function DashboardPage() {
             <div className="mb-12">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold text-white">Your Investments</h2>
-                <button
-                  onClick={generateTestIncome}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  테스트 수익금 생성 (30일치)
-                </button>
               </div>
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 investment-cards-grid">
                 {userPurchases['funding-1'] && (

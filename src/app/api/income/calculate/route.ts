@@ -1,20 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fileStorage } from '@/lib/fileStorage';
+import { PurchaseService } from '@/lib/db/purchaseService';
 import { fundingOptions } from '@/lib/fundingData';
+import jwt from 'jsonwebtoken';
 
 export async function POST(request: NextRequest) {
   try {
-    // In production, this should be protected and run as a scheduled job
-    const purchases = fileStorage.getAllPurchases();
+    // Basic auth check - in production this should be a proper admin auth or cron job
+    const authHeader = request.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        // Valid token, continue
+      } catch (error) {
+        return NextResponse.json(
+          { message: 'Invalid token' },
+          { status: 401 }
+        );
+      }
+    }
+    // If no auth header, still allow for backward compatibility during transition
+    
+    const purchases = await PurchaseService.getAll();
     const now = new Date();
     let updatedCount = 0;
+    
+    // Monthly return rate: 5% per month
+    // Daily return rate: 5% / 31 days = 0.161290% per day
+    const MONTHLY_RETURN_RATE = 0.05;
+    const DAILY_RETURN_RATE = MONTHLY_RETURN_RATE / 31;
 
-    purchases.forEach(purchase => {
-      if (!purchase.contractSigned) return;
+    for (const purchase of purchases) {
+      if (!purchase.contractSigned || !purchase.approved) continue;
 
       // Find the funding option
-      const funding = fundingOptions.find(f => f.id === purchase.fundingId);
-      if (!funding) return;
+      const funding = fundingOptions.find(f => `funding-${f.id}` === purchase.fundingId);
+      if (!funding) continue;
 
       // Calculate days since last update or purchase
       const lastUpdate = purchase.lastIncomeUpdate ? new Date(purchase.lastIncomeUpdate) : new Date(purchase.timestamp);
@@ -22,25 +43,33 @@ export async function POST(request: NextRequest) {
 
       if (daysDiff > 0) {
         // Calculate income based on funding type
+        // All funding types use the same 5% monthly return rate
         let dailyIncome = 0;
+        let principal = 0;
         
-        if (funding.id === '1' && funding.dailyIncome) {
-          // Dogecoin: Fixed daily income per unit
-          dailyIncome = purchase.quantity * funding.dailyIncome * daysDiff;
+        if (funding.id === '1') {
+          // Doge coin: Daily income based on investment amount (price paid)
+          principal = purchase.price;
+          dailyIncome = principal * DAILY_RETURN_RATE * daysDiff;
         } else if (funding.id === '2') {
-          // Data Center: Calculate based on investment amount (e.g., 0.1% daily)
-          dailyIncome = purchase.price * 0.001 * daysDiff;
+          // Data Center: Daily income based on investment amount
+          principal = purchase.price;
+          dailyIncome = principal * DAILY_RETURN_RATE * daysDiff;
         } else if (funding.id === '3') {
-          // VAST coin: Variable income (e.g., 0.5-1.5% daily)
-          const rate = 0.005 + Math.random() * 0.01; // Random between 0.5% and 1.5%
-          dailyIncome = purchase.quantity * 1000 * rate * daysDiff; // Assuming 1000 Vast base value
+          // VAST coin: Daily income based on investment amount
+          principal = purchase.price;
+          dailyIncome = principal * DAILY_RETURN_RATE * daysDiff;
         }
 
-        const newIncome = (purchase.accumulatedIncome || 0) + dailyIncome;
-        fileStorage.updatePurchaseIncome(purchase.id, newIncome);
-        updatedCount++;
+        const currentIncome = purchase.accumulatedIncome || 0;
+        const newIncome = currentIncome + dailyIncome;
+        
+        const success = await PurchaseService.updateIncome(purchase.id, newIncome);
+        if (success) {
+          updatedCount++;
+        }
       }
-    });
+    }
 
     return NextResponse.json({
       message: `Income calculated for ${updatedCount} purchases`,
