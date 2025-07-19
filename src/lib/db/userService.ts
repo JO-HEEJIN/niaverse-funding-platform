@@ -7,7 +7,7 @@ export class UserService {
     try {
       console.log('UserService.findByEmail called for:', email);
       const result = await client.query(
-        'SELECT id, email, password_hash as password, name, phone, address, confirmed, is_admin as "isAdmin" FROM users WHERE email = $1',
+        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin" FROM users WHERE email = $1',
         [email]
       );
       console.log('Query result:', result.rows.length > 0 ? 'User found' : 'User not found');
@@ -25,7 +25,7 @@ export class UserService {
     try {
       console.log('UserService.findById called for:', id);
       const result = await client.query(
-        'SELECT id, email, password_hash as password, name, phone, address, confirmed, is_admin as "isAdmin" FROM users WHERE id = $1',
+        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin" FROM users WHERE id = $1',
         [id]
       );
       console.log('Query result:', result.rows.length > 0 ? 'User found' : 'User not found');
@@ -67,7 +67,7 @@ export class UserService {
     const client = await pool.connect();
     try {
       const result = await client.query(
-        'SELECT id, email, password_hash as password, name, phone, address, confirmed, is_admin as "isAdmin" FROM users ORDER BY created_at DESC'
+        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin" FROM users ORDER BY created_at DESC'
       );
       return result.rows;
     } finally {
@@ -94,11 +94,8 @@ export class UserService {
         paramIndex++;
       }
 
-      if (updateData.address !== undefined) {
-        setClauses.push(`address = $${paramIndex}`);
-        values.push(updateData.address);
-        paramIndex++;
-      }
+      // Skip address field for now since it doesn't exist in the table
+      // TODO: Add address column to users table if needed
 
       if (setClauses.length === 0) {
         return true; // Nothing to update
