@@ -141,11 +141,39 @@ export async function POST(request: NextRequest) {
 
     await PurchaseService.create(purchaseData);
 
+    // 펀딩별 계좌 정보 반환
+    const getAccountInfo = (fundingType: string) => {
+      switch(fundingType) {
+        case '펀딩 I':
+          return { status: 'closed', message: '마감되었습니다' };
+        case '펀딩 II':
+          return { 
+            status: 'active', 
+            bank: '국민은행', 
+            accountHolder: '윤정훈',
+            accountNumber: '703002-01-135781'
+          };
+        case '펀딩 III':
+          return { 
+            status: 'active', 
+            bank: '미래에셋증권', 
+            accountHolder: '임희윤',
+            accountNumber: '808-0038-8314-0'
+          };
+        default:
+          return { status: 'unknown' };
+      }
+    };
+
     return NextResponse.json(
       { 
         success: true,
         contractId,
+        fundingType,
+        accountInfo: getAccountInfo(fundingType),
         message: '계약서가 성공적으로 제출되었습니다.',
+        pdfGenerated: !!pdfBuffer,
+        emailSent: emailSent
       },
       { status: 201 }
     );
@@ -164,6 +192,14 @@ export async function POST(request: NextRequest) {
 function generateContractHtml(data: Record<string, any>): string {
   const { contractId, fundingType, name, birthDate, email, phone, address, contractDate, signature } = data;
   
+  // 생년월일 포맷팅 (19900101 -> 1990.01.01)
+  const formatBirthDate = (dateStr: string) => {
+    if (dateStr.length === 8) {
+      return `${dateStr.substring(0, 4)}.${dateStr.substring(4, 6)}.${dateStr.substring(6, 8)}`;
+    }
+    return dateStr;
+  };
+  
   return `
     <!DOCTYPE html>
     <html lang="ko">
@@ -172,30 +208,170 @@ function generateContractHtml(data: Record<string, any>): string {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>49인 이하 투자조합 계약서</title>
       <style>
-        body { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-        .title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-        .contract-info { margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; }
+        @page { 
+          size: A4; 
+          margin: 20mm; 
+        }
+        body { 
+          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
+          line-height: 1.6; 
+          color: #333; 
+          font-size: 12px;
+          margin: 0;
+          padding: 20px;
+        }
+        .header { 
+          text-align: center; 
+          margin-bottom: 30px; 
+          border-bottom: 2px solid #000; 
+          padding-bottom: 20px; 
+        }
+        .title { 
+          font-size: 24px; 
+          font-weight: bold; 
+          margin-bottom: 10px; 
+        }
+        .contract-info { 
+          margin-bottom: 30px; 
+          padding: 20px; 
+          background-color: #f8f9fa; 
+          border: 1px solid #ddd;
+          border-radius: 8px; 
+        }
+        .content-section {
+          margin: 20px 0;
+        }
+        .article {
+          margin: 15px 0;
+        }
+        .article-title {
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .signature-section {
+          margin-top: 40px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+        }
+        .signature-box {
+          text-align: center;
+          width: 200px;
+        }
+        .signature-img {
+          max-width: 150px;
+          max-height: 80px;
+          border: 1px solid #ccc;
+          padding: 5px;
+          margin: 10px 0;
+        }
+        .signature-line {
+          border-bottom: 1px solid #000;
+          width: 150px;
+          height: 40px;
+          margin: 10px auto;
+        }
       </style>
     </head>
     <body>
       <div class="header">
         <div class="title">49인 이하 투자조합 계약서</div>
         <div>계약 번호: ${contractId}</div>
+        <div>NIA CLOUD</div>
       </div>
+      
       <div class="contract-info">
-        <strong>계약자 정보</strong><br>
-        성명: ${name}<br>
-        생년월일: ${birthDate}<br>
-        이메일: ${email}<br>
-        전화번호: ${phone}<br>
-        주소: ${address}<br>
-        계약일: ${contractDate}
+        <h4><strong>계약자 정보</strong></h4>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5; width: 120px;"><strong>성명</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5; width: 120px;"><strong>생년월일</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${formatBirthDate(birthDate)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>이메일</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>전화번호</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${phone}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>주소</strong></td>
+            <td colspan="3" style="padding: 8px; border: 1px solid #ddd;">${address}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>투자상품</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${fundingType}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>계약일</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${contractDate}</td>
+          </tr>
+        </table>
       </div>
-      <div>
-        <h3>계약 내용</h3>
-        <p>본 계약은 ${fundingType} 투자에 관한 계약입니다.</p>
-        <p>서명: ${signature ? `<img src="${signature}" alt="전자서명" style="max-width: 200px; max-height: 100px; border: 1px solid #ccc; padding: 5px;">` : '[서명 없음]'}</p>
+
+      <div class="content-section">
+        <p><strong>본 계약은 투자자(이하 "조합원")와 윤정훈(이하 "업무집행자")이 상호 신뢰와 협력을 바탕으로 「벤처투자 촉진에 관한 법률」 제19조 및 관련 법령에 의거하여 49인 이하의 사적 투자조합(이하 "조합")을 설립하고, 공동 출자에 따른 투자활동 및 권리·의무의 사항을 규정함을 목적으로 다음과 같이 체결한다.</strong></p>
+        
+        <div class="article">
+          <div class="article-title">제1조 (조합의 명칭 및 목적)</div>
+          <p>① 본 조합은 "NIA Cloud 49인 투자조합"(이하 "조합")이라 칭한다.</p>
+          <p>② 조합은 조합원이 공동으로 출자한 자금을 바탕으로 벤처기업, 실물자산 등 성장 잠재력이 있는 사업에 투자하여 그 성과에 따른 이익을 조합원에게 배분함을 목적으로 한다.</p>
+        </div>
+
+        <div class="article">
+          <div class="article-title">제2조 (조합원의 자격 및 출자)</div>
+          <p>① 조합원은 49인을 초과하지 아니한다.</p>
+          <p>② 조합원은 본 계약에 명시된 출자금액을 업무집행자가 지정하는 계좌에 납입하며, 출자금액과 지분율은 별도의 서면 합의서에 따른다.</p>
+          <p>③ 출자금의 납입은 완전하고 무조건적이며, 출자금 미납 시 조합원 자격을 상실할 수 있다.</p>
+        </div>
+
+        <div class="article">
+          <div class="article-title">제3조 (업무집행자 및 대표)</div>
+          <p>① 업무집행자는 윤정훈으로 한다.</p>
+          <p>② 업무집행자는 조합의 업무를 선량한 관리자 의무의 범위 내에서 성실히 수행하며, 조합의 자산 운용, 투자, 회계관리 및 조합원에 대한 보고 업무를 담당한다.</p>
+          <p>③ 업무집행자는 고의 또는 중대한 과실이 없는 한 조합의 투자 결과로 인한 손실에 대해 법적 책임을 지지 아니한다.</p>
+        </div>
+
+        <div class="article">
+          <div class="article-title">제4조 (이익 및 손실의 배분)</div>
+          <p>① 조합의 모든 이익과 손실은 조합원의 출자비율에 따라 배분 및 분담한다.</p>
+          <p>② 조합원은 조합의 결산 결과에 따라 정기적으로 수익을 배분받으며, 손실에 대해서도 출자비율에 따라 부담한다.</p>
+        </div>
+
+        <div class="article">
+          <div class="article-title">제5조 (지분의 양도 및 제한)</div>
+          <p>① 조합원의 지분 양도는 업무집행자의 사전 서면 동의를 받아야 한다.</p>
+          <p>② 업무집행자는 조합의 안정적 운영과 조합원의 권익 보호를 위해 부당한 지분 양도를 제한할 수 있다.</p>
+        </div>
+
+        <div class="article">
+          <div class="article-title">제6조 (조합의 존속기간 및 해산)</div>
+          <p>① 조합의 존속기간은 본 계약 체결일로부터 2년으로 한다.</p>
+          <p>② 존속기간 만료, 조합원 전원의 동의, 업무집행자의 제안에 따른 조합원 총회의 의결 또는 법률에서 정하는 사유 발생 시 조합은 해산한다.</p>
+          <p>③ 해산 시 조합의 청산 절차는 「상법」 및 관련 법령에 따른다. 잔여 재산은 조합원 출자 비율에 따라 분배한다.</p>
+        </div>
+      </div>
+
+      <div class="signature-section">
+        <div class="signature-box">
+          <p><strong>업무집행자(대표)</strong></p>
+          <p>성명: 윤정훈</p>
+          <p>생년월일: 1981.08.22</p>
+          <div class="signature-line"></div>
+          <p style="font-size: 10px;">(서명 또는 날인)</p>
+        </div>
+        
+        <div class="signature-box">
+          <p><strong>조합원</strong></p>
+          <p>성명: ${name}</p>
+          <p>생년월일: ${formatBirthDate(birthDate)}</p>
+          ${signature ? `<img src="${signature}" alt="전자서명" class="signature-img">` : '<div class="signature-line"></div>'}
+          <p style="font-size: 10px;">(서명 또는 날인)</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #666;">
+        <p>본 계약서는 NIA CLOUD 시스템을 통해 전자적으로 생성되었습니다.</p>
+        <p>생성일시: ${new Date().toLocaleString('ko-KR')}</p>
       </div>
     </body>
     </html>

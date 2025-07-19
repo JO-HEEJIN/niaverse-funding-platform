@@ -178,29 +178,123 @@ export default function ContractPage() {
     );
   }
 
+  const copyAccountNumber = async () => {
+    if (accountInfo && accountInfo.accountNumber) {
+      try {
+        await navigator.clipboard.writeText(accountInfo.accountNumber);
+        alert('계좌번호가 복사되었습니다.');
+      } catch (error) {
+        // 클립보드 API가 지원되지 않는 경우 대체 방법
+        const textArea = document.createElement('textarea');
+        textArea.value = accountInfo.accountNumber;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          alert('계좌번호가 복사되었습니다.');
+        } catch (fallbackError) {
+          alert('복사에 실패했습니다. 수동으로 복사해주세요.');
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+  };
+
   if (showSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-8 text-center max-w-lg w-full">
-          <div className="text-green-400 text-6xl mb-6">✓</div>
-          <h2 className="text-3xl font-bold text-white mb-6">계약이 성공적으로 체결되었습니다!</h2>
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl p-8 max-w-2xl w-full">
+          <div className="text-center mb-8">
+            <div className="text-green-400 text-6xl mb-6">✓</div>
+            <h2 className="text-3xl font-bold text-white mb-4">투자조합 계약이 완료되었습니다!</h2>
+            <p className="text-gray-300 mb-6">계약서가 이메일로 발송되었습니다.</p>
+          </div>
           
           {contractData && (
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 mb-6 text-left">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 mb-6">
               <h3 className="text-lg font-semibold text-white mb-4">계약 정보</h3>
-              <div className="space-y-2 text-sm text-gray-200">
-                <p><span className="font-medium">계약 번호:</span> {contractData.contractId}</p>
-                <p><span className="font-medium">투자 상품:</span> {purchaseData.fundingTitle}</p>
-                <p><span className="font-medium">투자 금액:</span> {formatPrice(purchaseData.price)}</p>
-                <p><span className="font-medium">계약 완료 시간:</span> {new Date().toLocaleString('ko-KR')}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-200">
+                <div>
+                  <p><span className="font-medium">계약 번호:</span> {contractData.contractId}</p>
+                  <p><span className="font-medium">투자 상품:</span> {purchaseData.fundingTitle}</p>
+                </div>
+                <div>
+                  <p><span className="font-medium">투자 금액:</span> {formatPrice(purchaseData.price)}</p>
+                  <p><span className="font-medium">계약 완료:</span> {new Date().toLocaleString('ko-KR')}</p>
+                </div>
               </div>
             </div>
           )}
-          
-          <p className="text-gray-300 mb-6">
-            투자조합 계약이 체결되었습니다. 곧 대시보드로 이동합니다.
-          </p>
-          <div className="animate-pulse text-indigo-300 text-lg font-medium">5초 후 자동 이동...</div>
+
+          {/* 계좌 정보 */}
+          <div className="bg-gradient-to-r from-blue-800/50 to-purple-800/50 rounded-lg p-6 border border-blue-400/20 mb-6">
+            <h3 className="text-xl font-bold text-white mb-4">투자금 입금 계좌 정보</h3>
+            
+            {accountInfo && accountInfo.status === 'closed' ? (
+              <div className="text-center py-8">
+                <div className="text-red-400 text-4xl mb-4">⚠️</div>
+                <p className="text-lg text-red-300 font-semibold">마감되었습니다</p>
+                <p className="text-sm text-gray-300 mt-2">해당 펀딩은 더 이상 투자를 받지 않습니다.</p>
+              </div>
+            ) : accountInfo && accountInfo.status === 'active' ? (
+              <div className="space-y-4">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-gray-300 text-sm">은행명</p>
+                      <p className="text-white font-semibold text-lg">{accountInfo.bank}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-300 text-sm">예금주</p>
+                      <p className="text-white font-semibold text-lg">{accountInfo.accountHolder}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-gray-300 text-sm">계좌번호</p>
+                    <div className="flex items-center justify-between bg-gray-800/50 rounded-lg p-3 mt-2">
+                      <span className="text-white font-mono text-xl font-bold">{accountInfo.accountNumber}</span>
+                      <button
+                        onClick={copyAccountNumber}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                      >
+                        복사
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-yellow-500/20 border border-yellow-400/30 rounded-lg p-4">
+                  <p className="text-yellow-300 text-sm font-medium">
+                    ⚠️ 위 계좌로 투자금을 입금해주세요. 입금 후 투자가 확정됩니다.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-300">계좌 정보를 불러오는 중...</p>
+              </div>
+            )}
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="space-y-3">
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-md text-lg font-medium transition-colors duration-200"
+            >
+              대시보드로 이동
+            </button>
+            
+            {accountInfo && accountInfo.status === 'active' && (
+              <button
+                onClick={copyAccountNumber}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md text-lg font-medium transition-colors duration-200"
+              >
+                계좌번호 다시 복사
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );

@@ -35,6 +35,7 @@ export default function DeparturePage() {
   const [selectedFunding, setSelectedFunding] = useState<string>('');
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [message, setMessage] = useState('');
+  const [withdrawalLimits, setWithdrawalLimits] = useState<any>(null);
   const [userId, setUserId] = useState<string>('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -49,6 +50,7 @@ export default function DeparturePage() {
 
     setUserId(storedUserId);
     loadUserIncomes(storedUserId);
+    loadWithdrawalLimits();
   }, [router]);
 
   const loadUserIncomes = async (userId: string) => {
@@ -95,9 +97,39 @@ export default function DeparturePage() {
     setIsLoading(false);
   };
 
+  const loadWithdrawalLimits = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/user/withdrawals', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch withdrawal limits');
+      }
+      
+      const data = await response.json();
+      setWithdrawalLimits(data.limits);
+    } catch (error) {
+      console.error('Error loading withdrawal limits:', error);
+    }
+  };
+
+  const calculateFee = (amount: number) => {
+    if (!withdrawalLimits) return 0;
+    return withdrawalLimits.isFirstWithdrawalFree ? 0 : Math.floor(amount * withdrawalLimits.feeRate);
+  };
+
+  const getFinalAmount = (amount: number) => {
+    const fee = calculateFee(amount);
+    return amount - fee;
+  };
+
   const handleWithdrawal = async () => {
     if (!selectedFunding || !withdrawAmount) {
-      setMessage('Please select a funding and enter withdrawal amount');
+      setMessage('펀딩을 선택하고 출금 금액을 입력해주세요.');
       return;
     }
 
@@ -105,17 +137,30 @@ export default function DeparturePage() {
     const funding = fundingIncomes.find(f => f.fundingId === selectedFunding);
     
     if (!funding) {
-      setMessage('Invalid funding selection');
+      setMessage('잘못된 펀딩 선택입니다.');
       return;
     }
 
     if (amount <= 0) {
-      setMessage('Please enter a valid amount');
+      setMessage('올바른 금액을 입력해주세요.');
       return;
     }
 
+    // 클라이언트 측 검증
+    if (withdrawalLimits) {
+      if (amount < withdrawalLimits.minAmount) {
+        setMessage(`최소 출금 금액은 ${withdrawalLimits.minAmount.toLocaleString()}원입니다.`);
+        return;
+      }
+      
+      if (withdrawalLimits.remainingToday <= 0) {
+        setMessage(`일일 출금 횟수를 초과했습니다. (최대 ${withdrawalLimits.maxDailyWithdrawals}회)`);
+        return;
+      }
+    }
+
     if (amount > funding.totalIncome) {
-      setMessage('Insufficient balance');
+      setMessage('출금 요청 금액이 보유 수익을 초과합니다.');
       return;
     }
 
@@ -136,18 +181,21 @@ export default function DeparturePage() {
       const result = await response.json();
       
       if (response.ok) {
-        setMessage('Withdrawal request submitted successfully. Admin will review your request.');
+        setMessage('출금 요청이 성공적으로 제출되었습니다. 관리자가 검토 후 처리됩니다.');
         setWithdrawAmount('');
         setSelectedFunding('');
+        
+        // 출금 제한 정보 다시 로드
+        loadWithdrawalLimits();
         
         setTimeout(() => {
           router.push('/history');
         }, 2000);
       } else {
-        setMessage(result.message || 'Failed to submit withdrawal request');
+        setMessage(result.message || '출금 요청 제출에 실패했습니다.');
       }
     } catch (error) {
-      setMessage('Failed to submit withdrawal request. Please try again.');
+      setMessage('출금 요청 제출에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -289,6 +337,42 @@ export default function DeparturePage() {
           </div>
         ) : (
           <div className="space-y-8">
+            {/* 출금 제한 정보 */}
+            {withdrawalLimits && (
+              <div className="bg-gradient-to-r from-blue-800/50 to-purple-800/50 rounded-lg p-6 border border-blue-400/20">
+                <h2 className="text-xl font-bold text-white mb-4">💰 출금 안내</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">최소 출금 금액:</span>
+                      <span className="text-white font-semibold">{withdrawalLimits.minAmount.toLocaleString()}원</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">일일 출금 제한:</span>
+                      <span className="text-white font-semibold">{withdrawalLimits.maxDailyWithdrawals}회</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">출금 수수료:</span>
+                      <span className="text-white font-semibold">{(withdrawalLimits.feeRate * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">오늘 출금 가능:</span>
+                      <span className={`font-semibold ${withdrawalLimits.remainingToday > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {withdrawalLimits.remainingToday}회
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {withdrawalLimits.isFirstWithdrawalFree && (
+                  <div className="mt-4 p-3 bg-green-500/20 border border-green-400/30 rounded-lg">
+                    <p className="text-green-300 text-sm font-medium">🎉 첫 출금은 수수료가 무료입니다!</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="bg-gray-800 rounded-lg p-6">
               <h2 className="text-2xl font-bold text-white mb-6">수익 현황</h2>
               <div className="space-y-4">
@@ -403,8 +487,28 @@ export default function DeparturePage() {
                         {fundingIncomes.find(f => f.fundingId === selectedFunding)?.unit}
                       </span>
                     </div>
-                    <div className="mt-2 text-sm text-gray-400">
-                      최대 출금 가능: {fundingIncomes.find(f => f.fundingId === selectedFunding)?.totalIncome.toLocaleString()} {fundingIncomes.find(f => f.fundingId === selectedFunding)?.unit}
+                    <div className="mt-2 space-y-1">
+                      <div className="text-sm text-gray-400">
+                        최대 출금 가능: {fundingIncomes.find(f => f.fundingId === selectedFunding)?.totalIncome.toLocaleString()} {fundingIncomes.find(f => f.fundingId === selectedFunding)?.unit}
+                      </div>
+                      {withdrawAmount && parseFloat(withdrawAmount) > 0 && withdrawalLimits && (
+                        <div className="text-sm bg-gray-700 p-3 rounded-md border">
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-300">출금 금액:</span>
+                            <span className="text-white font-semibold">{parseFloat(withdrawAmount).toLocaleString()}원</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-300">수수료:</span>
+                            <span className={`font-semibold ${withdrawalLimits.isFirstWithdrawalFree ? 'text-green-400' : 'text-yellow-400'}`}>
+                              {withdrawalLimits.isFirstWithdrawalFree ? '무료 (첫 출금)' : `${calculateFee(parseFloat(withdrawAmount)).toLocaleString()}원`}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center border-t border-gray-600 pt-2 mt-2">
+                            <span className="text-gray-300">실제 받을 금액:</span>
+                            <span className="text-green-400 font-bold text-lg">{getFinalAmount(parseFloat(withdrawAmount)).toLocaleString()}원</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     {/* 빠른 금액 선택 버튼 (모바일 최적화) */}
