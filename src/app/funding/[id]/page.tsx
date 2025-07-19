@@ -54,10 +54,6 @@ export default function FundingPage({ params }: FundingPageProps) {
   };
 
   const handlePurchase = () => {
-    if (!selectedQuantity) {
-      alert('수량을 선택해주세요.');
-      return;
-    }
     setShowPurchaseModal(true);
   };
 
@@ -66,12 +62,7 @@ export default function FundingPage({ params }: FundingPageProps) {
   };
 
   const handleProceedToPurchase = () => {
-    if (!selectedQuantity) {
-      alert('수량을 선택해주세요.');
-      return;
-    }
-    
-    const finalPrice = customPrice ? parseCustomPrice(customPrice) : getPriceForQuantity(selectedQuantity);
+    const finalPrice = customPrice ? parseCustomPrice(customPrice) : getPriceForQuantity(selectedQuantity || 1);
     
     // Store purchase data for contract
     const purchaseData = {
@@ -334,18 +325,6 @@ export default function FundingPage({ params }: FundingPageProps) {
                       </div>
                     </div>
 
-                    {/* Pricing Structure */}
-                    <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6 mb-6">
-                      <h4 className="text-lg font-medium text-white mb-4">가격 구조</h4>
-                      <div className="space-y-3">
-                        {funding.priceStructure.map((price, index) => (
-                          <div key={index} className="flex justify-between items-center py-2 border-b border-gray-600/30 last:border-b-0">
-                            <span className="text-gray-300">{price.quantity}개</span>
-                            <span className="font-medium text-white">{(price.price / 10000).toLocaleString()}만원</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
 
                     {/* Purchase Section */}
                     <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6">
@@ -386,28 +365,19 @@ export default function FundingPage({ params }: FundingPageProps) {
                             <div className="flex justify-between items-center text-lg font-medium">
                               <span className="text-white">투자 금액:</span>
                               <span className="text-indigo-400">
-                                {customPrice ? formatPrice(parseCustomPrice(customPrice)) : '금액을 입력하세요'}
+                                {formatPrice(parseCustomPrice(customPrice))}
                               </span>
                             </div>
                           </div>
 
                           <button
                             onClick={() => {
-                              if (!customPrice || parseCustomPrice(customPrice) < 1000000) {
-                                alert('최소 투자 금액은 100만원입니다.');
-                                return;
-                              }
                               setSelectedQuantity(1); // Set to 1 for validation
                               handlePurchase();
                             }}
-                            disabled={!customPrice || parseCustomPrice(customPrice) < 1000000}
-                            className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
-                              customPrice && parseCustomPrice(customPrice) >= 1000000
-                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
-                                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                            }`}
+                            className="w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl"
                           >
-                            {customPrice && parseCustomPrice(customPrice) >= 1000000 ? '투자하기' : '최소 100만원 이상 입력하세요'}
+                            투자하기
                           </button>
                         </>
                       )}
@@ -439,21 +409,16 @@ export default function FundingPage({ params }: FundingPageProps) {
                             <div className="flex justify-between items-center text-lg font-medium">
                               <span className="text-white">Total:</span>
                               <span className="text-indigo-400">
-                                {selectedQuantity ? formatPrice(getPriceForQuantity(selectedQuantity)) : '수량을 선택하세요'}
+                                {formatPrice(getPriceForQuantity(selectedQuantity || 1))}
                               </span>
                             </div>
                           </div>
 
                           <button
                             onClick={handlePurchase}
-                            disabled={!selectedQuantity}
-                            className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
-                              selectedQuantity
-                                ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
-                                : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                            }`}
+                            className="w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl"
                           >
-                            {selectedQuantity ? '구매하기' : '수량을 선택하세요'}
+                            구매하기
                           </button>
                         </>
                       )}
@@ -482,7 +447,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                   <strong>Quantity:</strong> {selectedQuantity}개
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>Total:</strong> {formatPrice(customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) || 0 : getPriceForQuantity(selectedQuantity))}
+                  <strong>Total:</strong> {formatPrice(customPrice ? parseCustomPrice(customPrice) : getPriceForQuantity(selectedQuantity || 1))}
                 </p>
               </div>
               <div className="items-center px-4 py-3">
