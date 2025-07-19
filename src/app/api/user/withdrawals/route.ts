@@ -100,10 +100,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 최소 출금 금액 확인
-    if (amount < MIN_WITHDRAWAL_AMOUNT) {
+    // 펀딩별 출금 규칙 확인
+    const funding = fundingOptions.find(f => `funding-${f.id}` === fundingId);
+    if (!funding) {
       return NextResponse.json(
-        { message: `최소 출금 금액은 ${MIN_WITHDRAWAL_AMOUNT.toLocaleString()}원입니다.` },
+        { message: '존재하지 않는 펀딩입니다.' },
+        { status: 400 }
+      );
+    }
+
+    // 펀딩 3 (VAST)는 출금 불가
+    if (funding.id === '3') {
+      return NextResponse.json(
+        { message: 'VAST는 출금이 불가능합니다.' },
+        { status: 400 }
+      );
+    }
+
+    // 펀딩별 최소 출금 금액 확인
+    let minAmount = MIN_WITHDRAWAL_AMOUNT;
+    let unit = '원';
+    
+    if (funding.id === '1') {
+      // 펀딩 I (Doge) - 개수 단위, 최소 1개
+      minAmount = 1;
+      unit = 'Doge';
+    } else if (funding.id === '2') {
+      // 펀딩 II (Data Center) - 원화 단위
+      minAmount = MIN_WITHDRAWAL_AMOUNT;
+      unit = '원';
+    }
+
+    if (amount < minAmount) {
+      return NextResponse.json(
+        { message: `최소 출금 ${unit === 'Doge' ? '개수' : '금액'}는 ${minAmount.toLocaleString()}${unit}입니다.` },
         { status: 400 }
       );
     }
@@ -146,9 +176,8 @@ export async function POST(request: NextRequest) {
     const fee = isFirstWithdrawal ? 0 : Math.floor(amount * WITHDRAWAL_FEE_RATE);
     const finalAmount = amount - fee;
 
-    // 펀딩 정보 가져오기
-    const funding = fundingOptions.find(f => `funding-${f.id}` === fundingId);
-    const fundingTitle = funding ? funding.title : fundingId;
+    const fundingTitle = funding.title;
+    const fundingUnit = funding.unit;
 
     // 출금 요청 생성
     const withdrawal = {
@@ -156,7 +185,7 @@ export async function POST(request: NextRequest) {
       fundingId,
       amount,
       status: 'pending' as const,
-      adminNotes: `${fundingTitle}에서 출금 요청${isFirstWithdrawal ? ' (첫 출금 - 수수료 무료)' : ''} - 수수료: ${fee}원, 실수령액: ${finalAmount}원`
+      adminNotes: `${fundingTitle}에서 출금 요청${isFirstWithdrawal ? ' (첫 출금 - 수수료 무료)' : ''} - 출금량: ${amount}${fundingUnit === 'Doge' ? ' Doge' : '원'}, 수수료: ${fee}원, 실수령액: ${finalAmount}${fundingUnit === 'Doge' ? ' Doge' : '원'}`
     };
 
     const withdrawalId = await WithdrawalService.create(withdrawal);

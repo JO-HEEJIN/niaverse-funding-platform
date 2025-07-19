@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { fundingOptions } from '@/lib/fundingData';
+import { formatKRW, formatCoinAmount } from '@/lib/formatters';
 
 interface Purchase {
   id: string;
@@ -37,6 +38,41 @@ export default function DeparturePage() {
   const [message, setMessage] = useState('');
   const [withdrawalLimits, setWithdrawalLimits] = useState<any>(null);
   const [userId, setUserId] = useState<string>('');
+
+  // Funding withdrawal rules
+  const getFundingWithdrawalInfo = (fundingId: string) => {
+    const funding = fundingOptions.find(f => `funding-${f.id}` === fundingId);
+    if (!funding) return null;
+
+    switch (funding.id) {
+      case '1': // 펀딩 I - Doge coin
+        return {
+          canWithdraw: true,
+          unit: 'Doge',
+          placeholder: '출금할 Doge 개수',
+          inputType: 'number',
+          description: '도지 코인 개수로 출금'
+        };
+      case '2': // 펀딩 II - Data Center
+        return {
+          canWithdraw: true,
+          unit: '₩',
+          placeholder: '출금할 금액 (₩)',
+          inputType: 'number',
+          description: '원화로 출금'
+        };
+      case '3': // 펀딩 III - VAST
+        return {
+          canWithdraw: false,
+          unit: 'VAST',
+          placeholder: '',
+          inputType: 'number',
+          description: 'VAST는 출금이 불가능합니다'
+        };
+      default:
+        return null;
+    }
+  };
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -387,9 +423,21 @@ export default function DeparturePage() {
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-green-400">
-                          {income.totalIncome.toLocaleString()} {income.unit}
+                          {income.unit === 'Doge' ? formatCoinAmount(income.totalIncome, 'Doge') : 
+                           income.unit === 'VAST' ? formatCoinAmount(income.totalIncome, 'VAST') : 
+                           formatKRW(income.totalIncome)}
                         </p>
-                        <p className="text-sm text-gray-400">출금 가능</p>
+                        <p className={`text-sm ${
+                          (() => {
+                            const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                            return withdrawalInfo?.canWithdraw ? 'text-green-400' : 'text-red-400';
+                          })()
+                        }`}>
+                          {(() => {
+                            const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                            return withdrawalInfo?.canWithdraw ? '출금 가능' : '출금 불가';
+                          })()}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -413,9 +461,14 @@ export default function DeparturePage() {
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="">펀딩을 선택하세요...</option>
-                      {fundingIncomes.map((income) => (
+                      {fundingIncomes.filter(income => {
+                        const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                        return withdrawalInfo?.canWithdraw;
+                      }).map((income) => (
                         <option key={income.fundingId} value={income.fundingId}>
-                          {income.fundingTitle} - {income.totalIncome.toLocaleString()} {income.unit} 출금 가능
+                          {income.fundingTitle} - {income.unit === 'Doge' ? formatCoinAmount(income.totalIncome, 'Doge') : 
+                           income.unit === 'VAST' ? formatCoinAmount(income.totalIncome, 'VAST') : 
+                           formatKRW(income.totalIncome)} 출금 가능
                         </option>
                       ))}
                     </select>
@@ -423,10 +476,17 @@ export default function DeparturePage() {
 
                   {/* Mobile: Radio Buttons */}
                   <div className="md:hidden space-y-2">
-                    {fundingIncomes.length === 0 ? (
+                    {/* Withdrawable fundings */}
+                    {fundingIncomes.filter(income => {
+                      const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                      return withdrawalInfo?.canWithdraw;
+                    }).length === 0 ? (
                       <div className="text-gray-400 text-sm">출금 가능한 펀딩이 없습니다.</div>
                     ) : (
-                      fundingIncomes.map((income) => (
+                      fundingIncomes.filter(income => {
+                        const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                        return withdrawalInfo?.canWithdraw;
+                      }).map((income) => (
                         <label
                           key={income.fundingId}
                           className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
@@ -451,7 +511,9 @@ export default function DeparturePage() {
                               {income.fundingTitle}
                             </div>
                             <div className="text-sm text-gray-400">
-                              {income.totalIncome.toLocaleString()} {income.unit} 출금 가능
+                              {income.unit === 'Doge' ? formatCoinAmount(income.totalIncome, 'Doge') : 
+                               income.unit === 'VAST' ? formatCoinAmount(income.totalIncome, 'VAST') : 
+                               formatKRW(income.totalIncome)} 출금 가능
                             </div>
                           </div>
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -466,32 +528,78 @@ export default function DeparturePage() {
                         </label>
                       ))
                     )}
+                    
+                    {/* Non-withdrawable fundings - for information only */}
+                    {fundingIncomes.filter(income => {
+                      const withdrawalInfo = getFundingWithdrawalInfo(income.fundingId);
+                      return !withdrawalInfo?.canWithdraw;
+                    }).map((income) => (
+                      <div
+                        key={`${income.fundingId}-disabled`}
+                        className="flex items-center p-4 rounded-lg border-2 border-red-600/30 bg-red-600/10"
+                        style={{ minHeight: '44px' }}
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-400">
+                            {income.fundingTitle}
+                          </div>
+                          <div className="text-sm text-red-400">
+                            {income.unit === 'Doge' ? formatCoinAmount(income.totalIncome, 'Doge') : 
+                             income.unit === 'VAST' ? formatCoinAmount(income.totalIncome, 'VAST') : 
+                             formatKRW(income.totalIncome)} - 출금 불가
+                          </div>
+                        </div>
+                        <div className="w-5 h-5 rounded-full border-2 border-red-400 flex items-center justify-center">
+                          <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {selectedFunding && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-3">
-                      출금 금액
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        value={withdrawAmount}
-                        onChange={(e) => setWithdrawAmount(e.target.value)}
-                        placeholder="출금할 금액을 입력하세요"
-                        className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
-                        style={{ fontSize: '16px' }} // iOS 줌 방지
-                      />
-                      <span className="text-white text-sm font-medium px-2">
-                        {fundingIncomes.find(f => f.fundingId === selectedFunding)?.unit}
-                      </span>
-                    </div>
-                    <div className="mt-2 space-y-1">
-                      <div className="text-sm text-gray-400">
-                        최대 출금 가능: {fundingIncomes.find(f => f.fundingId === selectedFunding)?.totalIncome.toLocaleString()} {fundingIncomes.find(f => f.fundingId === selectedFunding)?.unit}
+                {selectedFunding && (() => {
+                  const withdrawalInfo = getFundingWithdrawalInfo(selectedFunding);
+                  const selectedIncome = fundingIncomes.find(f => f.fundingId === selectedFunding);
+                  
+                  if (!withdrawalInfo?.canWithdraw) {
+                    return (
+                      <div className="bg-red-600/20 border border-red-400/30 rounded-lg p-6 text-center">
+                        <h3 className="text-lg font-semibold text-red-400 mb-2">출금 불가</h3>
+                        <p className="text-gray-300 text-sm mb-4">{withdrawalInfo?.description}</p>
+                        <p className="text-sm text-gray-400">
+                          현재 보유: {selectedIncome?.unit === 'Doge' ? formatCoinAmount(selectedIncome.totalIncome, 'Doge') : 
+                                     selectedIncome?.unit === 'VAST' ? formatCoinAmount(selectedIncome.totalIncome, 'VAST') : 
+                                     formatKRW(selectedIncome?.totalIncome || 0)}
+                        </p>
                       </div>
-                      {withdrawAmount && parseFloat(withdrawAmount) > 0 && withdrawalLimits && (
+                    );
+                  }
+
+                  return (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-3">
+                        출금 {withdrawalInfo.unit === 'Doge' ? '개수' : '금액'}
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder={withdrawalInfo.placeholder}
+                          className="flex-1 px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
+                          style={{ fontSize: '16px' }} // iOS 줌 방지
+                        />
+                        <span className="text-white text-sm font-medium px-2">
+                          {withdrawalInfo.unit}
+                        </span>
+                      </div>
+                      <div className="mt-2 space-y-1">
+                        <div className="text-sm text-gray-400">
+                          최대 출금 가능: {selectedIncome?.unit === 'Doge' ? formatCoinAmount(selectedIncome.totalIncome, 'Doge') : 
+                                         selectedIncome?.unit === 'VAST' ? formatCoinAmount(selectedIncome.totalIncome, 'VAST') : 
+                                         formatKRW(selectedIncome?.totalIncome || 0)}
+                        </div>
+                        {withdrawAmount && parseFloat(withdrawAmount) > 0 && withdrawalLimits && (
                         <div className="text-sm bg-gray-700 p-3 rounded-md border">
                           <div className="flex justify-between items-center">
                             <span className="text-gray-300">출금 금액:</span>
@@ -540,9 +648,10 @@ export default function DeparturePage() {
                           ));
                         })()}
                       </div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 <button
                   onClick={handleWithdrawal}
