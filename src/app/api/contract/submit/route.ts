@@ -195,7 +195,7 @@ function generateContractHtml(data: Record<string, any>): string {
       <div>
         <h3>계약 내용</h3>
         <p>본 계약은 ${fundingType} 투자에 관한 계약입니다.</p>
-        <p>서명: <img src="${signature}" alt="전자서명" style="max-width: 200px; max-height: 100px;"></p>
+        <p>서명: ${signature ? `<img src="${signature}" alt="전자서명" style="max-width: 200px; max-height: 100px; border: 1px solid #ccc; padding: 5px;">` : '[서명 없음]'}</p>
       </div>
     </body>
     </html>
@@ -204,9 +204,14 @@ function generateContractHtml(data: Record<string, any>): string {
 
 async function generatePDF(html: string): Promise<Buffer> {
   let browser;
+  let page;
+  const startTime = Date.now();
+  
   try {
-    console.log('Starting PDF generation...');
+    console.log('=== PDF GENERATION START ===');
+    console.log('HTML content length:', html.length);
     
+    // More aggressive browser cleanup options
     browser = await puppeteer.launch({
       headless: 'new',
       args: [
@@ -216,49 +221,98 @@ async function generatePDF(html: string): Promise<Buffer> {
         '--disable-web-security',
         '--disable-gpu',
         '--single-process',
-        '--no-zygote'
+        '--no-zygote',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--disable-background-networking',
+        '--max_old_space_size=4096' // Increase memory limit
       ],
+      timeout: 60000, // 1 minute timeout for browser launch
     });
     
-    console.log('Browser launched successfully');
+    console.log('Browser launched in', Date.now() - startTime, 'ms');
     
-    const page = await browser.newPage();
+    page = await browser.newPage();
     
-    // Set viewport for better rendering
+    // Set page configurations
+    await page.setDefaultTimeout(45000); // 45 second timeout
     await page.setViewport({ width: 1200, height: 1600 });
     
+    // Add error handlers
+    page.on('error', (err) => {
+      console.error('Page error:', err);
+    });
+    
+    page.on('pageerror', (err) => {
+      console.error('Page script error:', err);
+    });
+    
     console.log('Setting page content...');
+    const contentStartTime = Date.now();
+    
+    // Use simpler wait condition to avoid hanging
     await page.setContent(html, { 
-      waitUntil: 'networkidle0',
+      waitUntil: 'domcontentloaded', // Changed from 'networkidle0'
       timeout: 30000 
     });
     
+    console.log('Content set in', Date.now() - contentStartTime, 'ms');
+    
+    // Wait a bit for any dynamic content
+    await page.waitForTimeout(1000);
+    
     console.log('Generating PDF...');
+    const pdfStartTime = Date.now();
+    
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
       preferCSSPageSize: false,
+      timeout: 30000 // 30 second timeout for PDF generation
     });
     
-    await browser.close();
-    console.log('PDF generated successfully, size:', pdfBuffer.length);
+    console.log('PDF generated in', Date.now() - pdfStartTime, 'ms');
+    console.log('Total generation time:', Date.now() - startTime, 'ms');
+    console.log('PDF buffer size:', pdfBuffer.length, 'bytes');
     
     if (pdfBuffer.length === 0) {
       throw new Error('Generated PDF buffer is empty');
     }
     
     return Buffer.from(pdfBuffer);
+    
   } catch (error) {
-    console.error('PDF 생성 오류:', error);
-    if (browser) {
-      try {
-        await browser.close();
-      } catch (closeError) {
-        console.error('Browser close error:', closeError);
+    console.error('=== PDF GENERATION ERROR ===');
+    console.error('Total time before error:', Date.now() - startTime, 'ms');
+    console.error('Error type:', error instanceof Error ? error.name : 'Unknown');
+    console.error('Error message:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+    
+    throw error;
+  } finally {
+    // Ensure cleanup happens in the right order
+    try {
+      if (page) {
+        console.log('Closing page...');
+        await page.close();
       }
+    } catch (pageCloseError) {
+      console.error('Error closing page:', pageCloseError);
     }
-    throw error; // Re-throw error instead of returning empty buffer
+    
+    try {
+      if (browser) {
+        console.log('Closing browser...');
+        await browser.close();
+        console.log('Browser closed successfully');
+      }
+    } catch (browserCloseError) {
+      console.error('Error closing browser:', browserCloseError);
+    }
+    
+    console.log('=== PDF GENERATION CLEANUP COMPLETE ===');
   }
 }
 
