@@ -24,6 +24,7 @@ export default function ContractPage() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [contractData, setContractData] = useState<any>(null);
+  const [accountInfo, setAccountInfo] = useState<any>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
 
