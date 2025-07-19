@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
     // 임시로 기본값 설정
     const defaultPurchaseData = {
       quantity: 1,
-      price: fundingType === '펀딩 I' ? 10000000 : 
-             fundingType === '펀딩 II' ? 20000000 : 50000000,
+      price: fundingType === '펀딩 I' ? 1000000 : 
+             fundingType === '펀딩 II' ? 1000000 : 1000000,
       fundingTitle: fundingType === '펀딩 I' ? '도지 채굴기' : 
                    fundingType === '펀딩 II' ? '데이터 센터' : 'VAST',
     };

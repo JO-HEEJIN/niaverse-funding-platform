@@ -14,7 +14,7 @@ interface FundingPageProps {
 
 export default function FundingPage({ params }: FundingPageProps) {
   const [funding, setFunding] = useState<FundingOption | null>(null);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedQuantity, setSelectedQuantity] = useState<number | null>(null);
   const [customPrice, setCustomPrice] = useState('');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,8 +45,8 @@ export default function FundingPage({ params }: FundingPageProps) {
     return Math.min((raised / goal) * 100, 100);
   };
 
-  const getPriceForQuantity = (quantity: number) => {
-    if (!funding) return 0;
+  const getPriceForQuantity = (quantity: number | null) => {
+    if (!funding || !quantity) return 0;
     
     const pricePoint = funding.priceStructure.find(p => p.quantity === quantity);
     if (pricePoint) {
@@ -58,6 +58,10 @@ export default function FundingPage({ params }: FundingPageProps) {
   };
 
   const handlePurchase = () => {
+    if (!selectedQuantity) {
+      alert('수량을 선택해주세요.');
+      return;
+    }
     setShowPurchaseModal(true);
   };
 
@@ -66,6 +70,11 @@ export default function FundingPage({ params }: FundingPageProps) {
   };
 
   const handleProceedToPurchase = () => {
+    if (!selectedQuantity) {
+      alert('수량을 선택해주세요.');
+      return;
+    }
+    
     const finalPrice = customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) : getPriceForQuantity(selectedQuantity);
     
     // Store purchase data for contract
@@ -331,12 +340,12 @@ export default function FundingPage({ params }: FundingPageProps) {
 
                     {/* Pricing Structure */}
                     <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6 mb-6">
-                      <h4 className="text-lg font-medium text-white mb-4">Pricing Structure</h4>
+                      <h4 className="text-lg font-medium text-white mb-4">가격 구조</h4>
                       <div className="space-y-3">
                         {funding.priceStructure.map((price, index) => (
                           <div key={index} className="flex justify-between items-center py-2 border-b border-gray-600/30 last:border-b-0">
-                            <span className="text-gray-300">{price.quantity} unit{price.quantity > 1 ? 's' : ''}</span>
-                            <span className="font-medium text-white">{formatPrice(price.price)}</span>
+                            <span className="text-gray-300">{price.quantity}개</span>
+                            <span className="font-medium text-white">{(price.price / 10000).toLocaleString()}만원</span>
                           </div>
                         ))}
                       </div>
@@ -344,20 +353,23 @@ export default function FundingPage({ params }: FundingPageProps) {
 
                     {/* Purchase Section */}
                     <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6">
-                      <h4 className="text-lg font-medium text-white mb-4">Purchase Options</h4>
+                      <h4 className="text-lg font-medium text-white mb-4">구매 옵션</h4>
                       
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-white mb-2">
-                          Quantity
+                          수량 선택
                         </label>
                         <select
-                          value={selectedQuantity}
-                          onChange={(e) => setSelectedQuantity(parseInt(e.target.value))}
-                          className="block w-full px-3 py-2 border border-white/30 rounded-md shadow-sm text-white bg-white/10 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                          value={selectedQuantity || ''}
+                          onChange={(e) => setSelectedQuantity(e.target.value ? parseInt(e.target.value) : null)}
+                          className="block w-full px-4 py-3 border border-white/20 rounded-lg shadow-lg text-white bg-white/10 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:bg-white/15"
                         >
+                          <option value="" className="text-gray-900 bg-white">
+                            선택하세요
+                          </option>
                           {funding.priceStructure.map((price) => (
-                            <option key={price.quantity} value={price.quantity} className="text-gray-900">
-                              {price.quantity} unit{price.quantity > 1 ? 's' : ''} - {formatPrice(price.price)}
+                            <option key={price.quantity} value={price.quantity} className="text-gray-900 bg-white">
+                              {price.quantity}개 ({(price.price / 10000).toLocaleString()}만원)
                             </option>
                           ))}
                         </select>
@@ -383,16 +395,24 @@ export default function FundingPage({ params }: FundingPageProps) {
                         <div className="flex justify-between items-center text-lg font-medium">
                           <span className="text-white">Total:</span>
                           <span className="text-indigo-400">
-                            {formatPrice(customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) || 0 : getPriceForQuantity(selectedQuantity))}
+                            {selectedQuantity || customPrice ? 
+                              formatPrice(customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) || 0 : getPriceForQuantity(selectedQuantity))
+                              : '수량을 선택하세요'
+                            }
                           </span>
                         </div>
                       </div>
 
                       <button
                         onClick={handlePurchase}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-md text-lg font-medium transition-colors duration-200"
+                        disabled={!selectedQuantity && !customPrice}
+                        className={`w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 ${
+                          selectedQuantity || customPrice
+                            ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl'
+                            : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                        }`}
                       >
-                        Purchase Now
+                        {selectedQuantity || customPrice ? '구매하기' : '수량을 선택하세요'}
                       </button>
                     </div>
                   </div>
@@ -416,7 +436,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                   <strong>Item:</strong> {funding.title}
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>Quantity:</strong> {selectedQuantity} unit{selectedQuantity > 1 ? 's' : ''}
+                  <strong>Quantity:</strong> {selectedQuantity}개
                 </p>
                 <p className="text-sm text-gray-600">
                   <strong>Total:</strong> {formatPrice(customPrice ? parseInt(customPrice.replace(/[^0-9]/g, '')) || 0 : getPriceForQuantity(selectedQuantity))}
