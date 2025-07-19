@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { fileStorage } from '@/lib/fileStorage';
+import { UserService } from '@/lib/db/userService';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const { email, password, name, phone } = registerSchema.parse(body);
 
     // Check if user already exists
-    const existingUser = fileStorage.findUserByEmail(email);
+    const existingUser = await UserService.findByEmail(email);
     if (existingUser) {
       return NextResponse.json(
         { message: 'User already exists' },
@@ -35,9 +35,10 @@ export async function POST(request: NextRequest) {
       name,
       phone,
       confirmed: true, // Auto-confirm user
+      isAdmin: false,
     };
 
-    fileStorage.addUser(user);
+    await UserService.create(user);
 
     return NextResponse.json(
       { message: 'User registered successfully. You can now log in.' },
