@@ -29,10 +29,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user is admin
-    const user = await UserService.findById(parseInt(decoded.userId));
+    console.log('Admin check - decoded.userId:', decoded.userId, 'type:', typeof decoded.userId);
+    const userId = parseInt(decoded.userId);
+    console.log('Admin check - parsed userId:', userId);
+    
+    const user = await UserService.findById(userId);
+    console.log('Admin check - found user:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
+    
     if (!user?.isAdmin) {
       return NextResponse.json(
-        { message: 'Forbidden - Admin access required' },
+        { message: 'Forbidden - Admin access required', debug: { userId, foundUser: !!user, isAdmin: user?.isAdmin } },
         { status: 403 }
       );
     }

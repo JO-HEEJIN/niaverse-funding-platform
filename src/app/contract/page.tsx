@@ -155,11 +155,10 @@ export default function ContractPage() {
 
       if (response.ok && result.success) {
         setContractData(result);
+        setAccountInfo(result.accountInfo);
         setShowSuccess(true);
         localStorage.removeItem('purchaseData');
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 5000);
+        // 자동 리다이렉트 제거 - 사용자가 직접 버튼으로 이동
       } else {
         alert(result.message || '계약 제출에 실패했습니다. 다시 시도해주세요.');
       }
