@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { fileStorage } from '@/lib/fileStorage';
+import { UserService } from '@/lib/db/userService';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.split(' ')[1];
     let decoded;
+    
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as {
         userId: string;
@@ -26,7 +27,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const user = fileStorage.findUserById(decoded.userId);
+    // Get user info from database
+    const user = await UserService.findById(decoded.userId);
     if (!user) {
       return NextResponse.json(
         { message: 'User not found' },
@@ -34,15 +36,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Return user info (without password)
     return NextResponse.json({
       id: user.id,
       email: user.email,
       name: user.name,
-      phone: user.phone,
-      isAdmin: user.isAdmin || false
+      isAdmin: user.isAdmin || false,
     });
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('Auth me error:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
