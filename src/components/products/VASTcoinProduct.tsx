@@ -10,25 +10,25 @@ export default function VASTcoinProduct({ purchases, totalIncome }: VASTcoinProd
   const totalQuantity = purchases.reduce((sum, p) => sum + p.quantity, 0);
   
   return (
-    <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/30 backdrop-blur-sm border border-purple-400/20 rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-2xl font-bold text-white">VAST coin</h3>
-        <div className="bg-purple-500/20 px-3 py-1 rounded-full">
+    <div className="investment-card bg-gradient-to-br from-purple-600/20 to-purple-800/30 backdrop-blur-sm border border-purple-400/20 rounded-lg p-4 sm:p-6">
+      <div className="card-header flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <h3 className="text-xl sm:text-2xl font-bold text-white">VAST coin</h3>
+        <div className="badge bg-purple-500/20 px-3 py-1 rounded-full self-start sm:self-auto">
           <span className="text-purple-300 text-sm font-medium">Cryptocurrency</span>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <p className="text-gray-400 text-sm">Total Holdings</p>
-          <p className="text-xl font-bold text-white">
-            {totalQuantity} Bast
+      <div className="vast-holdings grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="stat-item bg-gray-800/50 rounded-lg p-4">
+          <p className="stat-label text-gray-400 text-sm mb-2">Total Holdings</p>
+          <p className="stat-value text-xl font-bold text-white break-all">
+            {totalQuantity} Vast
           </p>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <p className="text-gray-400 text-sm">Current Value</p>
-          <p className="text-xl font-bold text-purple-400">
-            {totalIncome.toLocaleString()} Bast
+        <div className="stat-item bg-gray-800/50 rounded-lg p-4">
+          <p className="stat-label text-gray-400 text-sm mb-2">Current Value</p>
+          <p className="stat-value text-xl font-bold text-purple-400 break-all">
+            {totalIncome.toLocaleString()} Vast
           </p>
         </div>
       </div>

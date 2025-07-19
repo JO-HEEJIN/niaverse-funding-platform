@@ -10,24 +10,24 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
   const totalQuantity = purchases.reduce((sum, p) => sum + p.quantity, 0);
   
   return (
-    <div className="bg-gradient-to-br from-yellow-600/20 to-yellow-800/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-2xl font-bold text-white">Dogecoin</h3>
-        <div className="bg-yellow-500/20 px-3 py-1 rounded-full">
+    <div className="investment-card bg-gradient-to-br from-yellow-600/20 to-yellow-800/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-4 sm:p-6">
+      <div className="card-header flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <h3 className="text-xl sm:text-2xl font-bold text-white">Dogecoin</h3>
+        <div className="badge bg-yellow-500/20 px-3 py-1 rounded-full self-start sm:self-auto">
           <span className="text-yellow-300 text-sm font-medium">Cryptocurrency</span>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <p className="text-gray-400 text-sm">Total Investment</p>
-          <p className="text-xl font-bold text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="stat-item bg-gray-800/50 rounded-lg p-4">
+          <p className="stat-label text-gray-400 text-sm mb-2">Total Investment</p>
+          <p className="stat-value text-xl font-bold text-white break-all">
             {totalQuantity} Doji
           </p>
         </div>
-        <div className="bg-gray-800/50 rounded-lg p-4">
-          <p className="text-gray-400 text-sm">Accumulated Income</p>
-          <p className="text-xl font-bold text-green-400">
+        <div className="stat-item bg-gray-800/50 rounded-lg p-4">
+          <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
+          <p className="stat-value text-xl font-bold text-green-400 break-all">
             {totalIncome.toLocaleString()} Doji
           </p>
         </div>

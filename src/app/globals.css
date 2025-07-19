@@ -72,3 +72,67 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* Mobile UI optimization for investment cards */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .investment-card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .investment-cards-grid .investment-card + .investment-card {
+    margin-top: 1.5rem;
+  }
+  
+  .investment-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+    word-break: break-all;
+  }
+  
+  .card-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .income-display .income-value {
+    font-size: 1rem;
+    word-break: break-all;
+  }
+  
+  .vast-holdings .stat-value {
+    word-break: break-all;
+  }
+}
+
+/* Ensure proper spacing on all screen sizes */
+.investment-cards-grid {
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .investment-cards-grid {
+    gap: 2rem;
+  }
+}

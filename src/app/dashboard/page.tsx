@@ -226,13 +226,13 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="dashboard-container max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Purchased Products Section */}
           {Object.keys(userPurchases).length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-white mb-6">Your Investments</h2>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">Your Investments</h2>
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 investment-cards-grid">
                 {userPurchases['funding-1'] && (
                   <DogecoinProduct 
                     purchases={userPurchases['funding-1'].purchases}
@@ -256,7 +256,7 @@ export default function DashboardPage() {
           )}
 
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white">Available Funding Opportunities</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Available Funding Opportunities</h2>
             <p className="mt-2 text-gray-300">
               Discover and invest in innovative projects that are changing the world.
             </p>

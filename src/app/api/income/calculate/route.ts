@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         } else if (funding.id === '3') {
           // VAST coin: Variable income (e.g., 0.5-1.5% daily)
           const rate = 0.005 + Math.random() * 0.01; // Random between 0.5% and 1.5%
-          dailyIncome = purchase.quantity * 1000 * rate * daysDiff; // Assuming 1000 Bast base value
+          dailyIncome = purchase.quantity * 1000 * rate * daysDiff; // Assuming 1000 Vast base value
         }
 
         const newIncome = (purchase.accumulatedIncome || 0) + dailyIncome;
