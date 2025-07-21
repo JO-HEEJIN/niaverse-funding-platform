@@ -11,6 +11,8 @@ export default function UpdateFundingPage() {
   const [accumulatedIncome, setAccumulatedIncome] = useState('144000');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState('');
 
   // 펀딩 타입에 따른 설정
   const getFundingInfo = (id: string) => {
@@ -51,6 +53,49 @@ export default function UpdateFundingPage() {
   };
 
   const fundingInfo = getFundingInfo(fundingId);
+
+  const handleDeleteUser = async () => {
+    if (!email) {
+      setDeleteMessage('Please enter an email address');
+      return;
+    }
+
+    const confirmed = window.confirm(`정말로 ${email} 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`);
+    if (!confirmed) return;
+
+    setDeleteLoading(true);
+    setDeleteMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setDeleteMessage('Please login as admin first');
+        return;
+      }
+
+      const response = await fetch('/api/admin/delete-user', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDeleteMessage(`Success! Deleted user: ${email}`);
+        setEmail(''); // Clear email field after successful deletion
+      } else {
+        setDeleteMessage(`Error: ${data.message || data.error}`);
+      }
+    } catch (error) {
+      setDeleteMessage('Failed to delete user');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,13 +208,24 @@ export default function UpdateFundingPage() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? 'Updating...' : 'Update Funding'}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-1 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Updating...' : 'Update Funding'}
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleDeleteUser}
+            disabled={deleteLoading || !email}
+            className="flex-1 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+          >
+            {deleteLoading ? 'Deleting...' : 'Delete User'}
+          </button>
+        </div>
       </form>
 
       {message && (
@@ -177,6 +233,14 @@ export default function UpdateFundingPage() {
           message.includes('Success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
         }`}>
           {message}
+        </div>
+      )}
+
+      {deleteMessage && (
+        <div className={`mt-4 p-3 rounded-md ${
+          deleteMessage.includes('Success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}>
+          {deleteMessage}
         </div>
       )}
 
@@ -200,6 +264,15 @@ export default function UpdateFundingPage() {
           <p className="text-sm">Funding: funding-2 (데이터센터)</p>
           <p className="text-sm">Amount: 30,000,000원 (30개)</p>
           <p className="text-sm">Income: 144,000원</p>
+        </div>
+
+        <div className="mt-4 p-3 bg-red-50 rounded border border-red-200">
+          <h4 className="font-semibold text-sm text-red-800">⚠️ 계정 삭제 주의사항:</h4>
+          <ul className="text-sm text-red-700 mt-2 space-y-1">
+            <li>• 계정 삭제는 되돌릴 수 없습니다</li>
+            <li>• 연관된 모든 구매 내역도 함께 삭제됩니다</li>
+            <li>• 삭제 전 반드시 이메일을 확인하세요</li>
+          </ul>
         </div>
       </div>
     </div>
