@@ -1,0 +1,59 @@
+
+> niaverse@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.4.1 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://172.30.1.58:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 810ms
+ ○ Compiling /api/test-db ...
+ ✓ Compiled /api/test-db in 622ms
+Database URL: Set
+NODE_ENV: development
+DATABASE_URL env var: Set
+Database host: niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require&ssl=true
+Testing database connection...
+Database connection error: Error: self-signed certificate in certificate chain
+    at async GET (src/app/api/test-db/route.ts:8:13)
+   6 |   try {
+   7 |     console.log('Testing database connection...');
+>  8 |     client = await pool.connect();
+     |             ^
+   9 |     
+  10 |     // Test query
+  11 |     const result = await client.query('SELECT NOW() as current_time, version() as db_version'); {
+  code: 'SELF_SIGNED_CERT_IN_CHAIN'
+}
+Error details: {
+  message: 'self-signed certificate in certificate chain',
+  stack: 'Error: self-signed certificate in certificate chain\n' +
+    '    at /Users/momo/niaverse/node_modules/pg-pool/index.js:45:11\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (/Users/momo/niaverse/.next/server/chunks/[root-of-the-server]__fec9063d._.js:164:18)\n' +
+    '    at async AppRouteRouteModule.do (/Users/momo/niaverse/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:38782)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/momo/niaverse/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:45984)\n' +
+    '    at async responseGenerator (/Users/momo/niaverse/.next/server/chunks/node_modules_next_e1ae4cba._.js:12857:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (/Users/momo/niaverse/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:1:183725)\n' +
+    '    at async handleResponse (/Users/momo/niaverse/.next/server/chunks/node_modules_next_e1ae4cba._.js:12919:32)\n' +
+    '    at async handler (/Users/momo/niaverse/.next/server/chunks/node_modules_next_e1ae4cba._.js:12971:13)\n' +
+    '    at async doRender (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:1586:34)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:1928:13)\n' +
+    '    at async DevServer.renderPageComponent (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:2394:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:2434:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:1034:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/momo/niaverse/node_modules/next/dist/server/next-server.js:391:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/momo/niaverse/node_modules/next/dist/server/base-server.js:925:17)\n' +
+    '    at async /Users/momo/niaverse/node_modules/next/dist/server/dev/next-dev-server.js:398:20\n' +
+    '    at async Span.traceAsyncFn (/Users/momo/niaverse/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/momo/niaverse/node_modules/next/dist/server/dev/next-dev-server.js:394:24)\n' +
+    '    at async invokeRender (/Users/momo/niaverse/node_modules/next/dist/server/lib/router-server.js:239:21)\n' +
+    '    at async handleRequest (/Users/momo/niaverse/node_modules/next/dist/server/lib/router-server.js:436:24)\n' +
+    '    at async requestHandlerImpl (/Users/momo/niaverse/node_modules/next/dist/server/lib/router-server.js:464:13)\n' +
+    '    at async Server.requestListener (/Users/momo/niaverse/node_modules/next/dist/server/lib/start-server.js:218:13)',
+  code: 'SELF_SIGNED_CERT_IN_CHAIN',
+  detail: undefined
+}
+ GET /api/test-db 500 in 1593ms

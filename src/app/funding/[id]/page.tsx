@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { fundingOptions } from '@/lib/fundingData';
 import type { FundingOption } from '@/lib/fundingData';
 import { formatPrice, parseCustomPrice } from '@/lib/formatters';
+import { useFundingPurchase } from '@/hooks/useFundingPurchase';
 
 interface FundingPageProps {
   params: Promise<{
@@ -21,6 +22,7 @@ export default function FundingPage({ params }: FundingPageProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const { id } = use(params);
+  const { proceedToPurchase } = useFundingPurchase();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -34,6 +36,16 @@ export default function FundingPage({ params }: FundingPageProps) {
       setFunding(fundingOption);
     }
   }, [id, router]);
+
+
+  const handleProceed = () => {
+    proceedToPurchase({
+      customPrice,
+      selectedQuantity,
+      funding,
+      getPriceForQuantity,
+    });
+  };
 
   // formatPrice is now imported from formatters
 
@@ -60,22 +72,7 @@ export default function FundingPage({ params }: FundingPageProps) {
   const handleClosePurchaseModal = () => {
     setShowPurchaseModal(false);
   };
-
-  const handleProceedToPurchase = () => {
-    const finalPrice = customPrice ? parseCustomPrice(customPrice) : getPriceForQuantity(selectedQuantity || 1);
-    
-    // Store purchase data for contract
-    const purchaseData = {
-      fundingId: funding?.id,
-      fundingTitle: funding?.title,
-      quantity: selectedQuantity,
-      price: finalPrice,
-    };
-    
-    localStorage.setItem('purchaseData', JSON.stringify(purchaseData));
-    router.push('/contract');
-  };
-
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
@@ -461,7 +458,7 @@ export default function FundingPage({ params }: FundingPageProps) {
               </div>
               <div className="items-center px-4 py-3">
                 <button
-                  onClick={handleProceedToPurchase}
+                  onClick={handleProceed}
                   className="px-4 py-2 bg-indigo-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-3"
                 >
                   Proceed to Contract
