@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import * as schema from './schema';
 
 // Create connection
-const connectionString = process.env.DATABASE_URL || 'postgresql://niaverse_admin:NiaverseDB2024!@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse';
+const connectionString = process.env.DATABASE_URL || 'postgresql://niaverse_admin:Qlalfqjsgh1!@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse';
 
 // For development
 const client = postgres(connectionString, {
