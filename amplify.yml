@@ -15,7 +15,9 @@ frontend:
       commands:
         - echo "Building Next.js application..."
         - echo "Creating .env file from Amplify environment variables..."
-        - env | grep -E '^(DATABASE_URL|JWT_SECRET|SMTP_|NODE_ENV)' > .env.production || true
+        - env | grep -E '^(DATABASE_URL|JWT_SECRET|SMTP_|NODE_ENV)' > .env.production.local || true
+        - echo "Environment variables created:"
+        - cat .env.production.local || true
         - npm run build
   artifacts:
     baseDirectory: .next
