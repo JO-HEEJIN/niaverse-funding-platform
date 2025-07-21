@@ -130,10 +130,17 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="text-center">
-              <Link href="/register" className="text-indigo-600 hover:text-indigo-500">
-                계정이 없으신가요? 회원가입
-              </Link>
+            <div className="text-center space-y-2">
+              <div>
+                <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
+                  비밀번호를 잊으셨나요?
+                </Link>
+              </div>
+              <div>
+                <Link href="/register" className="text-indigo-600 hover:text-indigo-500">
+                  계정이 없으신가요? 회원가입
+                </Link>
+              </div>
             </div>
           </form>
         </div>

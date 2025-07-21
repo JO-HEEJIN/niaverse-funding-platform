@@ -108,4 +108,56 @@ export class UserService {
       client.release();
     }
   }
+
+  static async savePasswordResetToken(userId: string, token: string, expiry: Date): Promise<boolean> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE users SET reset_token = $1, reset_token_expiry = $2 WHERE id = $3',
+        [token, expiry, userId]
+      );
+      return result.rowCount > 0;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async findByResetToken(token: string): Promise<User | null> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin", reset_token, reset_token_expiry FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()',
+        [token]
+      );
+      return result.rows[0] || null;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async clearPasswordResetToken(userId: string): Promise<boolean> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE users SET reset_token = NULL, reset_token_expiry = NULL WHERE id = $1',
+        [userId]
+      );
+      return result.rowCount > 0;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async updatePassword(userId: string, newPasswordHash: string): Promise<boolean> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2',
+        [newPasswordHash, userId]
+      );
+      return result.rowCount > 0;
+    } finally {
+      client.release();
+    }
+  }
 }
