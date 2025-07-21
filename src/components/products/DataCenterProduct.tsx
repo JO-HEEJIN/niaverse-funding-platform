@@ -25,13 +25,6 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
     cleanTotalIncome = isNaN(parsed) ? 0 : parsed;
   }
   
-  // Debug logging (remove in production)
-  console.log('DataCenter Debug:', {
-    totalAmount,
-    cleanTotalIncome,
-    originalTotalIncome: totalIncome,
-    purchases: purchases.map(p => ({ price: p.price, accumulatedIncome: p.accumulatedIncome }))
-  });
   
   return (
     <div className="investment-card bg-gradient-to-br from-blue-600/20 to-blue-800/30 backdrop-blur-sm border border-blue-400/20 rounded-lg p-4 sm:p-6">

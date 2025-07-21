@@ -135,19 +135,6 @@ export default function DeparturePage() {
 
       const incomeArray = Object.values(incomeByFunding);
       
-      // Debug logging
-      console.log('Departure Debug:', {
-        purchases: purchases.map(p => ({
-          fundingId: p.fundingId,
-          accumulatedIncome: p.accumulatedIncome,
-          type: typeof p.accumulatedIncome
-        })),
-        incomeByFunding: incomeArray.map(income => ({
-          fundingId: income.fundingId,
-          totalIncome: income.totalIncome,
-          type: typeof income.totalIncome
-        }))
-      });
       
       setFundingIncomes(incomeArray);
     } catch (error) {
