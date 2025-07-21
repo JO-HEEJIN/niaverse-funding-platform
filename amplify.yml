@@ -22,7 +22,6 @@ frontend:
         - echo "SMTP_USER=$SMTP_USER" >> .env.production.local
         - echo "SMTP_PASS=$SMTP_PASS" >> .env.production.local
         - echo "SMTP_SECURE=$SMTP_SECURE" >> .env.production.local
-        - echo "NODE_ENV=$NODE_ENV" >> .env.production.local
         - echo "Environment variables created:"
         - cat .env.production.local || true
         - npm run build

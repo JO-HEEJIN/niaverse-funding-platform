@@ -20,7 +20,6 @@ const nextConfig = {
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_SECURE: process.env.SMTP_SECURE,
-    NODE_ENV: process.env.NODE_ENV,
   },
   // Amplify에서 환경 변수를 읽을 수 있도록 serverRuntimeConfig 추가
   serverRuntimeConfig: {
