@@ -57,3 +57,35 @@ Error details: {
   detail: undefined
 }
  GET /api/test-db 500 in 1593ms
+ ✓ Compiled /api/health in 75ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.sb0qi5m4mtl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.sb0qi5m4mtl'
+}
+ ✓ Compiled /_error in 497ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.dq9voazkr6'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.dq9voazkr6'
+}
+[Error: ENOENT: no such file or directory, open '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.sb0qi5m4mtl'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.sb0qi5m4mtl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.r0fentefacf'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.r0fentefacf'
+}
+[Error: ENOENT: no such file or directory, open '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.ol9fq2ktooa'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/momo/niaverse/.next/static/development/_buildManifest.js.tmp.ol9fq2ktooa'
+}

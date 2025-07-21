@@ -3,8 +3,12 @@ import { User } from '../fileStorage';
 
 export class UserService {
   static async findByEmail(email: string): Promise<User | null> {
-    const client = await pool.connect();
+    let client;
     try {
+      console.log('UserService.findByEmail - Getting database connection...');
+      client = await pool.connect();
+      console.log('UserService.findByEmail - Connected to database');
+      
       console.log('UserService.findByEmail called for:', email);
       const result = await client.query(
         'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin" FROM users WHERE email = $1',
@@ -14,9 +18,12 @@ export class UserService {
       return result.rows[0] || null;
     } catch (error) {
       console.error('UserService.findByEmail error:', error);
+      console.error('Database connection string present:', !!process.env.DATABASE_URL);
       throw error;
     } finally {
-      client.release();
+      if (client) {
+        client.release();
+      }
     }
   }
 

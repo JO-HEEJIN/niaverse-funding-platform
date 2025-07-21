@@ -25,10 +25,11 @@ if (databaseUrl) {
 
 const pool = new Pool({
   connectionString: parseConnectionString(databaseUrl),
+  max: 20, // maximum number of clients in the pool
+  idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
+  connectionTimeoutMillis: 2000, // how long to wait when requesting a connection
   ssl: databaseUrl && databaseUrl.includes('amazonaws.com') ? { 
     rejectUnauthorized: false,
-    // AWS RDS requires SSL in all environments
-    require: true,
     // Additional SSL options for development
     checkServerIdentity: () => undefined
   } : false,
