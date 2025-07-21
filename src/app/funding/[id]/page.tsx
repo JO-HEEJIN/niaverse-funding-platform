@@ -382,43 +382,52 @@ export default function FundingPage({ params }: FundingPageProps) {
                         </>
                       )}
 
-                      {/* Funding 3 - Quantity Selection Only */}
+                      {/* Funding 3 - VAST Coin KRW Input */}
                       {funding.id === '3' && (
                         <>
                           <div className="mb-4">
                             <label className="block text-sm font-medium text-white mb-2">
-                              수량 선택
+                              투자 금액 입력 (원화)
                             </label>
-                            <select
-                              value={selectedQuantity || ''}
-                              onChange={(e) => setSelectedQuantity(e.target.value ? parseInt(e.target.value) : null)}
+                            <input
+                              type="text"
+                              value={customPrice}
+                              onChange={(e) => setCustomPrice(e.target.value)}
+                              placeholder="투자할 원화 금액을 입력하세요 (예: 1000000)"
                               className="block w-full px-4 py-3 border border-white/20 rounded-lg shadow-lg text-white bg-white/10 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 hover:bg-white/15"
-                            >
-                              <option value="" className="text-gray-900 bg-white">
-                                선택하세요
-                              </option>
-                              {funding.priceStructure.map((price) => (
-                                <option key={price.quantity} value={price.quantity} className="text-gray-900 bg-white">
-                                  {price.quantity} unit - {formatPrice(price.price)}
-                                </option>
-                              ))}
-                            </select>
+                            />
+                            <p className="text-sm text-gray-400 mt-1">
+                              1,000원 = 1 VAST coin (최소 투자: ₩1,000)
+                            </p>
                           </div>
 
-                          <div className="mb-6">
-                            <div className="flex justify-between items-center text-lg font-medium">
-                              <span className="text-white">Total:</span>
-                              <span className="text-indigo-400">
-                                {formatPrice(getPriceForQuantity(selectedQuantity || 1))}
-                              </span>
+                          <div className="mb-4">
+                            <div className="bg-gray-600/30 border border-gray-500/40 rounded-lg p-4">
+                              <div className="flex justify-between text-sm text-gray-300 mb-2">
+                                <span>투자 금액:</span>
+                                <span className="text-indigo-400">
+                                  {formatPrice(parseCustomPrice(customPrice))}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm text-gray-300">
+                                <span>받을 VAST 코인:</span>
+                                <span className="text-purple-400">
+                                  {Math.floor(parseCustomPrice(customPrice) / 1000).toLocaleString()} VAST
+                                </span>
+                              </div>
                             </div>
                           </div>
 
                           <button
-                            onClick={handlePurchase}
-                            className="w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl"
+                            onClick={() => {
+                              const vastQuantity = Math.floor(parseCustomPrice(customPrice) / 1000);
+                              setSelectedQuantity(vastQuantity);
+                              handlePurchase();
+                            }}
+                            disabled={parseCustomPrice(customPrice) < 1000}
+                            className="w-full py-3 px-4 rounded-md text-lg font-medium transition-all duration-200 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            구매하기
+                            VAST 코인 구매하기
                           </button>
                         </>
                       )}

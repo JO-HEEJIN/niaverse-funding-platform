@@ -86,13 +86,13 @@ export const fundingOptions: FundingOption[] = [
     title: '펀딩 III',
     description: '디지털 참여 혁신 플랫폼으로 DeFi 보상 시스템을 통해 연 20% 유동성 인센티브를 제공합니다. 단일 토큰 스테이킹으로 간편하게 수익을 얻으세요.',
     image: '/api/placeholder/400/300',
-    basePrice: 1000000,
+    basePrice: 1000,
     unit: 'VAST',
     priceStructure: [
-      { quantity: 1, price: 1000000 },
-      { quantity: 2, price: 2000000 },
-      { quantity: 3, price: 3000000 },
-      { quantity: 5, price: 5000000 },
+      { quantity: 1000, price: 1000000 },
+      { quantity: 2000, price: 2000000 },
+      { quantity: 3000, price: 3000000 },
+      { quantity: 5000, price: 5000000 },
     ],
     details: {
       category: 'Cryptocurrency',

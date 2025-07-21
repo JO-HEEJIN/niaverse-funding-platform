@@ -7,13 +7,15 @@ interface VASTcoinProductProps {
   totalIncome: number;
 }
 
-export default function VASTcoinProduct({ purchases, totalIncome }: VASTcoinProductProps) {
+export default function VASTcoinProduct({ purchases }: VASTcoinProductProps) {
   const totalQuantity = purchases.reduce((sum, p) => sum + p.quantity, 0);
   
-  // VAST to KRW conversion
+  // VAST coin value calculation
+  // totalQuantity is the actual VAST coins purchased
+  // Current value = VAST coins × $1 × USD-KRW rate
   const vastToUSD = 1; // 1 VAST = $1
   const usdToKRW = 1300; // 1 USD = 1,300 KRW
-  const currentValueInKRW = totalIncome * vastToUSD * usdToKRW;
+  const currentValueInKRW = totalQuantity * vastToUSD * usdToKRW;
   
   return (
     <div className="investment-card bg-gradient-to-br from-purple-600/20 to-purple-800/30 backdrop-blur-sm border border-purple-400/20 rounded-lg p-4 sm:p-6">

@@ -199,11 +199,15 @@ export default function PurchasePage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Base Price:</span>
-                      <span className="text-white">₩{option.basePrice.toLocaleString()}</span>
+                      <span className="text-white">
+                        {option.id === '3' ? '₩1,000 per VAST' : `₩${option.basePrice.toLocaleString()}`}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Unit:</span>
-                      <span className="text-white">{option.unit}</span>
+                      <span className="text-gray-400">Purchase Type:</span>
+                      <span className="text-white">
+                        {option.id === '3' ? 'KRW Input' : option.unit}
+                      </span>
                     </div>
                     {option.dailyIncome && (
                       <div className="flex justify-between">
