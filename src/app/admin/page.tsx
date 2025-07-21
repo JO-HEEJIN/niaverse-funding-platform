@@ -520,7 +520,24 @@ export default function AdminPage() {
                         <div>
                           <p className="text-gray-400 text-sm">구매 금액</p>
                           <p className="text-xl font-bold text-green-400">
-                            {purchase.price.toLocaleString()} {fundingInfo?.unit || '원'}
+                            {(() => {
+                              if (purchase.fundingId === 'funding-1') {
+                                // Doge: quantity * basePrice로 계산된 실제 구매량 표시
+                                // funding-1 basePrice는 1,000,000원당 1000 Doge
+                                const dogePerUnit = 1000; // 1단위당 1000 Doge
+                                const dogeAmount = purchase.quantity * dogePerUnit;
+                                return `${dogeAmount.toLocaleString()} Doge`;
+                              } else if (purchase.fundingId === 'funding-3') {
+                                // VAST: quantity * basePrice로 계산된 실제 구매량 표시
+                                // funding-3 basePrice는 1,000,000원당 1000 VAST
+                                const vastPerUnit = 1000; // 1단위당 1000 VAST  
+                                const vastAmount = purchase.quantity * vastPerUnit;
+                                return `${vastAmount.toLocaleString()} VAST`;
+                              } else {
+                                // Data Center: 원화로 표시
+                                return `${purchase.price.toLocaleString()} 원`;
+                              }
+                            })()}
                           </p>
                         </div>
                         <div>

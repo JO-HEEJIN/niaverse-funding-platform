@@ -8,14 +8,20 @@ interface VASTcoinProductProps {
 }
 
 export default function VASTcoinProduct({ purchases }: VASTcoinProductProps) {
-  const totalQuantity = purchases.reduce((sum, p) => sum + p.quantity, 0);
+  // Calculate total VAST coins: based on purchase amount and VAST price structure
+  // funding-3: basePrice: 1000 (1000원 = 1 VAST), priceStructure: [{ quantity: 1000, price: 1000000 }]
+  // So 1,000,000원 = 1000 VAST tokens
+  const totalVAST = purchases.reduce((sum, p) => {
+    // Price per VAST = 1000원, so total VAST = price / 1000
+    return sum + (p.price / 1000);
+  }, 0);
   
   // VAST coin value calculation
-  // totalQuantity is the actual VAST coins purchased
+  // totalVAST is the actual VAST coins purchased
   // Current value = VAST coins × $1 × USD-KRW rate
   const vastToUSD = 1; // 1 VAST = $1
   const usdToKRW = 1300; // 1 USD = 1,300 KRW
-  const currentValueInKRW = totalQuantity * vastToUSD * usdToKRW;
+  const currentValueInKRW = totalVAST * vastToUSD * usdToKRW;
   
   return (
     <div className="investment-card bg-gradient-to-br from-purple-600/20 to-purple-800/30 backdrop-blur-sm border border-purple-400/20 rounded-lg p-4 sm:p-6">
@@ -30,7 +36,7 @@ export default function VASTcoinProduct({ purchases }: VASTcoinProductProps) {
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Holdings</p>
           <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
-            {formatCoinAmount(totalQuantity, 'VAST')}
+            {formatCoinAmount(totalVAST, 'VAST')}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">

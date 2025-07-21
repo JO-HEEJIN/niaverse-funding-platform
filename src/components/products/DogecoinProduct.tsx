@@ -8,8 +8,10 @@ interface DogecoinProductProps {
 }
 
 export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProductProps) {
-  // Calculate total mining units (quantity represents mining machines)
-  const totalQuantity = purchases.reduce((sum, p) => sum + (typeof p.quantity === 'number' ? p.quantity : 0), 0);
+  // Calculate total Doge coins: 1 mining unit = 1000 Doge (based on 1M won = 1000 Doge)
+  const miningUnits = purchases.reduce((sum, p) => sum + (typeof p.quantity === 'number' ? p.quantity : 0), 0);
+  const dogePerUnit = 1000; // 1 mining unit = 1000 Doge
+  const totalDogeCoins = miningUnits * dogePerUnit;
   
   // Calculate days since first purchase to determine accumulated income
   const calculateAccumulatedIncome = () => {
@@ -30,11 +32,11 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
     
     // Daily income = mining units × 2 (each mining unit generates 2 Doge/day)
     // Accumulated income = mining units × 2 × days passed
-    return totalQuantity * 2 * Math.max(daysPassed, 0);
+    return miningUnits * 2 * Math.max(daysPassed, 0);
   };
   
   const accumulatedIncome = calculateAccumulatedIncome();
-  const dailyIncomeRate = totalQuantity * 2; // Each mining unit generates 2 Doge/day
+  const dailyIncomeRate = miningUnits * 2; // Each mining unit generates 2 Doge/day
   
   return (
     <div className="investment-card bg-gradient-to-br from-yellow-600/20 to-yellow-800/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-4 sm:p-6">
@@ -47,9 +49,9 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
-          <p className="stat-label text-gray-400 text-sm mb-2">Total Investment</p>
+          <p className="stat-label text-gray-400 text-sm mb-2">Total Doge Holdings</p>
           <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
-            {formatCoinAmount(totalQuantity, 'mining')}
+            {formatCoinAmount(totalDogeCoins, 'Doge')}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
@@ -66,9 +68,9 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
           <span className="text-3xl font-bold text-yellow-400">{dailyIncomeRate}</span>
           <span className="text-gray-400 ml-2">Doge/day</span>
         </div>
-        {totalQuantity > 0 && (
+        {miningUnits > 0 && (
           <p className="text-xs text-gray-500 mt-2">
-            {totalQuantity} mining × 2 Doge/day per unit
+            {miningUnits} mining units × 2 Doge/day per unit
           </p>
         )}
       </div>
