@@ -15,7 +15,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user exists
-    const user = await UserService.findByEmail(email);
+    let user;
+    try {
+      user = await UserService.findByEmail(email);
+    } catch (dbError) {
+      console.error('Database error finding user:', dbError);
+      // For security, don't reveal database errors to users
+      // Just log the error and continue as if user doesn't exist
+      return NextResponse.json(
+        { message: '비밀번호 재설정 링크가 전송되었습니다.' },
+        { status: 200 }
+      );
+    }
+    
     if (!user) {
       // Don't reveal if user exists or not for security
       return NextResponse.json(
@@ -57,8 +69,21 @@ export async function POST(request: NextRequest) {
           error: emailError instanceof Error ? emailError.message : emailError,
           stack: emailError instanceof Error ? emailError.stack : 'No stack trace',
           smtpUser: process.env.SMTP_USER ? 'Set' : 'Not set',
-          smtpPass: process.env.SMTP_PASS ? 'Set' : 'Not set'
+          smtpPass: process.env.SMTP_PASS ? 'Set' : 'Not set',
+          recipientEmail: email,
+          emailDomain: emailDomain
         });
+        
+        // Check if it's an AWS SES verification issue
+        const errorMessage = emailError instanceof Error ? emailError.message : String(emailError);
+        if (errorMessage.includes('Email address is not verified') || errorMessage.includes('554 Message rejected')) {
+          console.warn('AWS SES Sandbox Mode: Email address not verified. This is expected in development.');
+          console.warn('To resolve this issue:');
+          console.warn('1. Verify the recipient email address in AWS SES console');
+          console.warn('2. Or request production access for AWS SES');
+          console.warn('3. For now, password reset token is saved and can be used directly');
+        }
+        
         // Continue without failing - email issue shouldn't block the reset process
       }
     } else {

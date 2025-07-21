@@ -25,10 +25,12 @@ if (databaseUrl) {
 
 const pool = new Pool({
   connectionString: parseConnectionString(databaseUrl),
-  ssl: process.env.NODE_ENV === 'production' ? { 
+  ssl: databaseUrl && databaseUrl.includes('amazonaws.com') ? { 
     rejectUnauthorized: false,
-    // AWS RDS requires SSL
-    require: true
+    // AWS RDS requires SSL in all environments
+    require: true,
+    // Additional SSL options for development
+    checkServerIdentity: () => undefined
   } : false,
 });
 

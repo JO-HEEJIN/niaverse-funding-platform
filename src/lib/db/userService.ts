@@ -25,7 +25,7 @@ export class UserService {
     try {
       console.log('UserService.findById called for:', id);
       const result = await client.query(
-        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin" FROM users WHERE id = $1',
+        'SELECT id, email, password_hash as password, name, phone, confirmed, is_admin as "isAdmin", reset_token, reset_token_expiry FROM users WHERE id = $1',
         [id]
       );
       console.log('Query result:', result.rows.length > 0 ? 'User found' : 'User not found');
