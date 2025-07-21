@@ -52,11 +52,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email with reset link
+    const emailDomain = email.split('@')[1]?.toLowerCase();
     console.log('Attempting to send password reset email...');
     console.log('SMTP Environment check:', {
       smtpUser: process.env.SMTP_USER ? 'Set' : 'Not set',
       smtpPass: process.env.SMTP_PASS ? 'Set' : 'Not set',
-      appUrl: process.env.NEXT_PUBLIC_APP_URL || 'Not set'
+      appUrl: process.env.NEXT_PUBLIC_APP_URL || 'Not set',
+      recipientEmail: email,
+      emailDomain: emailDomain
     });
 
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
