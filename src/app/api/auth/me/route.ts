@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       id: user.id,
       email: user.email,
       name: user.name,
+      phone: user.phone,
       isAdmin: user.isAdmin || false,
     });
   } catch (error) {
