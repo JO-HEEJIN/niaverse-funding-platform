@@ -9,6 +9,7 @@ export default function UpdateFundingPage() {
   const [fundingId, setFundingId] = useState('funding-2');
   const [amount, setAmount] = useState('30000000');
   const [accumulatedIncome, setAccumulatedIncome] = useState('144000');
+  const [purchasePrice, setPurchasePrice] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -94,6 +95,50 @@ export default function UpdateFundingPage() {
       setDeleteMessage('Failed to delete user');
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  const handleUpdatePurchasePrice = async () => {
+    if (!email || !purchasePrice) {
+      setMessage('Please enter email and purchase price');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setMessage('Please login as admin first');
+        return;
+      }
+
+      const response = await fetch('/api/admin/update-purchase-price', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email,
+          fundingId,
+          newPrice: parseInt(purchasePrice),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(`Success! Updated purchase price for ${data.user}`);
+        setPurchasePrice(''); // Clear price field after success
+      } else {
+        setMessage(`Error: ${data.message || data.error}`);
+      }
+    } catch (error) {
+      setMessage('Failed to update purchase price');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -243,6 +288,38 @@ export default function UpdateFundingPage() {
           {deleteMessage}
         </div>
       )}
+
+      {/* 구매 금액 변경 섹션 */}
+      <div className="mt-6 p-4 bg-blue-50 rounded-md border border-blue-200">
+        <h3 className="text-lg font-semibold mb-4 text-blue-800">구매 금액 변경</h3>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-blue-700 mb-1">
+              새 구매 금액 (원)
+            </label>
+            <input
+              type="number"
+              value={purchasePrice}
+              onChange={(e) => setPurchasePrice(e.target.value)}
+              className="w-full px-3 py-2 border border-blue-300 rounded-md text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="새로운 구매 금액을 입력하세요"
+              step="1000"
+            />
+            <p className="text-sm text-blue-600 mt-1">
+              현재 선택된 펀딩: {fundingInfo.name} ({fundingInfo.unit})
+            </p>
+          </div>
+
+          <button
+            onClick={handleUpdatePurchasePrice}
+            disabled={loading || !email || !purchasePrice}
+            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Updating Price...' : 'Update Purchase Price'}
+          </button>
+        </div>
+      </div>
 
       <div className="mt-6 p-4 bg-gray-100 rounded-md">
         <h3 className="font-semibold mb-2">펀딩 타입별 입력 안내:</h3>
