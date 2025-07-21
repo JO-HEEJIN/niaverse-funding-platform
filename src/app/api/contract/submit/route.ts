@@ -364,7 +364,7 @@ function generateContractHtml(data: Record<string, any>): string {
           <p><strong>조합원</strong></p>
           <p>성명: ${name}</p>
           <p>생년월일: ${formatBirthDate(birthDate)}</p>
-          ${signature ? `<img src="${signature}" alt="전자서명" class="signature-img">` : '<div class="signature-line"></div>'}
+          ${signature ? `<img src="${signature}" alt="전자서명" class="signature-img" style="max-width: 150px; max-height: 80px; border: 1px solid #ccc; padding: 5px; margin: 10px 0; display: block; object-fit: contain;">` : '<div class="signature-line"></div>'}
           <p style="font-size: 10px;">(서명 또는 날인)</p>
         </div>
       </div>
@@ -387,7 +387,7 @@ async function generatePDF(html: string): Promise<Buffer> {
     console.log('=== PDF GENERATION START ===');
     console.log('HTML content length:', html.length);
     
-    // More aggressive browser cleanup options
+    // Optimized browser options for PDF generation
     browser = await puppeteer.launch({
       headless: 'new',
       args: [
@@ -396,23 +396,28 @@ async function generatePDF(html: string): Promise<Buffer> {
         '--disable-dev-shm-usage',
         '--disable-web-security',
         '--disable-gpu',
-        '--single-process',
-        '--no-zygote',
         '--disable-background-timer-throttling',
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
         '--disable-background-networking',
-        '--max_old_space_size=4096' // Increase memory limit
+        '--disable-extensions',
+        '--disable-plugins',
+        '--disable-default-apps',
+        '--no-default-browser-check',
+        '--no-first-run',
+        '--disable-features=VizDisplayCompositor',
+        '--memory-pressure-off'
       ],
-      timeout: 60000, // 1 minute timeout for browser launch
+      timeout: 30000, // 30 second timeout for browser launch
+      protocolTimeout: 30000,
     });
     
     console.log('Browser launched in', Date.now() - startTime, 'ms');
     
     page = await browser.newPage();
     
-    // Set page configurations
-    await page.setDefaultTimeout(45000); // 45 second timeout
+    // Set page configurations for optimal PDF generation
+    await page.setDefaultTimeout(20000); // 20 second timeout
     await page.setViewport({ width: 1200, height: 1600 });
     
     // Add error handlers
@@ -424,21 +429,39 @@ async function generatePDF(html: string): Promise<Buffer> {
       console.error('Page script error:', err);
     });
     
+    // Set user agent for better compatibility
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+    
     console.log('Setting page content...');
     const contentStartTime = Date.now();
     
-    // Use simpler wait condition to avoid hanging
+    // Validate HTML content before setting
+    if (!html || html.trim().length === 0) {
+      throw new Error('HTML content is empty or invalid');
+    }
+    
+    // Set content with optimized wait strategy
     await page.setContent(html, { 
-      waitUntil: 'domcontentloaded', // Changed from 'networkidle0'
-      timeout: 30000 
+      waitUntil: 'load',
+      timeout: 15000 
     });
     
     console.log('Content set in', Date.now() - contentStartTime, 'ms');
     
-    // Wait a bit for any dynamic content
-    await page.waitForTimeout(1000);
+    // Wait for images to load, especially base64 signatures
+    await page.evaluate(() => {
+      return Promise.all(
+        Array.from(document.images, (img) => {
+          if (img.complete) return Promise.resolve(img.naturalHeight !== 0);
+          return new Promise((resolve) => {
+            img.addEventListener('load', () => resolve(true));
+            img.addEventListener('error', () => resolve(false));
+          });
+        })
+      );
+    });
     
-    console.log('Generating PDF...');
+    console.log('Images loaded, generating PDF...');
     const pdfStartTime = Date.now();
     
     const pdfBuffer = await page.pdf({
@@ -446,7 +469,8 @@ async function generatePDF(html: string): Promise<Buffer> {
       printBackground: true,
       margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
       preferCSSPageSize: false,
-      timeout: 30000 // 30 second timeout for PDF generation
+      displayHeaderFooter: false,
+      timeout: 20000 // 20 second timeout for PDF generation
     });
     
     console.log('PDF generated in', Date.now() - pdfStartTime, 'ms');
@@ -495,6 +519,13 @@ async function generatePDF(html: string): Promise<Buffer> {
 async function sendEmailWithPDF(pdfBuffer: Buffer, data: Record<string, any>) {
   const { fundingType, name, email, contractId } = data;
   
+  // Validate PDF buffer
+  if (!pdfBuffer || pdfBuffer.length === 0) {
+    throw new Error('PDF buffer is empty or invalid');
+  }
+  
+  console.log(`Sending email with PDF attachment (${pdfBuffer.length} bytes)`);
+  
   const transporter = nodemailer.createTransport({
     host: 'email-smtp.us-east-2.amazonaws.com',
     port: 587,
@@ -503,19 +534,41 @@ async function sendEmailWithPDF(pdfBuffer: Buffer, data: Record<string, any>) {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 5000, // 5 seconds
+    socketTimeout: 10000, // 10 seconds
   });
+  
+  // Verify SMTP connection
+  try {
+    await transporter.verify();
+    console.log('SMTP connection verified successfully');
+  } catch (verifyError) {
+    console.error('SMTP verification failed:', verifyError);
+    throw new Error('Failed to verify SMTP connection');
+  }
   
   const mailOptions = {
     from: 'master@niaverse.org',
     to: 'master@niaverse.org',
     subject: `[NIA Cloud] ${fundingType} 투자계약서 - ${name}`,
     html: `
-      <h2>NIA Cloud 투자조합 계약서</h2>
-      <p><strong>계약자:</strong> ${name}</p>
-      <p><strong>펀딩 타입:</strong> ${fundingType}</p>
-      <p><strong>계약 번호:</strong> ${contractId}</p>
-      <p><strong>계약자 이메일:</strong> ${email}</p>
-      <p><strong>계약 일시:</strong> ${new Date().toLocaleString('ko-KR')}</p>
+      <div style="font-family: 'Malgun Gothic', Arial, sans-serif; padding: 20px; background-color: #f8f9fa;">
+        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">NIA Cloud 투자조합 계약서</h2>
+          <div style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-left: 4px solid #2196f3;">
+            <p style="margin: 5px 0;"><strong>계약자:</strong> ${name}</p>
+            <p style="margin: 5px 0;"><strong>펀딩 타입:</strong> ${fundingType}</p>
+            <p style="margin: 5px 0;"><strong>계약 번호:</strong> ${contractId}</p>
+            <p style="margin: 5px 0;"><strong>계약자 이메일:</strong> ${email}</p>
+            <p style="margin: 5px 0;"><strong>계약 일시:</strong> ${new Date().toLocaleString('ko-KR')}</p>
+          </div>
+          <div style="margin: 20px 0; padding: 15px; background: #e8f5e8; border: 1px solid #4caf50; border-radius: 4px;">
+            <p style="margin: 0; color: #2e7d32;"><strong>✅ PDF 계약서가 첨부되었습니다.</strong></p>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">첨부된 PDF 파일에서 전자서명을 포함한 완전한 계약서를 확인하실 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
     `,
     attachments: [
       {
@@ -526,7 +579,9 @@ async function sendEmailWithPDF(pdfBuffer: Buffer, data: Record<string, any>) {
     ],
   };
 
-  await transporter.sendMail(mailOptions);
+  const result = await transporter.sendMail(mailOptions);
+  console.log('Email with PDF sent successfully:', result.messageId);
+  return result;
 }
 
 async function sendHTMLEmail(data: Record<string, any>) {
@@ -542,24 +597,38 @@ async function sendHTMLEmail(data: Record<string, any>) {
     },
   });
   
+  // Process HTML to ensure signature images display properly in email
+  const processedHtml = html.replace(/src="data:image\/([^;]+);base64,([^"]+)"/g, (match: string) => {
+    // Keep inline base64 images as they are for better email compatibility
+    return match;
+  });
+
   const mailOptions = {
     from: 'master@niaverse.org',
     to: 'master@niaverse.org',
     subject: `[NIA Cloud] ${fundingType} 투자계약서 - ${name} (HTML)`,
     html: `
-      <div style="padding: 20px; background-color: #f5f5f5;">
-        <h2>NIA Cloud 투자조합 계약서</h2>
-        <p><strong>계약자:</strong> ${name}</p>
-        <p><strong>펀딩 타입:</strong> ${fundingType}</p>
-        <p><strong>계약 번호:</strong> ${contractId}</p>
-        <p><strong>계약자 이메일:</strong> ${email}</p>
-        <p><strong>계약 일시:</strong> ${new Date().toLocaleString('ko-KR')}</p>
-        <p><strong>참고:</strong> PDF 생성에 실패하여 HTML 버전으로 전송됩니다.</p>
-        <hr>
-        ${html}
+      <div style="padding: 20px; background-color: #f5f5f5; font-family: 'Malgun Gothic', Arial, sans-serif;">
+        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">NIA Cloud 투자조합 계약서</h2>
+          <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #007bff;">
+            <p style="margin: 5px 0;"><strong>계약자:</strong> ${name}</p>
+            <p style="margin: 5px 0;"><strong>펀딩 타입:</strong> ${fundingType}</p>
+            <p style="margin: 5px 0;"><strong>계약 번호:</strong> ${contractId}</p>
+            <p style="margin: 5px 0;"><strong>계약자 이메일:</strong> ${email}</p>
+            <p style="margin: 5px 0;"><strong>계약 일시:</strong> ${new Date().toLocaleString('ko-KR')}</p>
+          </div>
+          <div style="margin: 20px 0; padding: 10px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;">
+            <p style="margin: 0; color: #856404;"><strong>참고:</strong> PDF 생성에 실패하여 HTML 버전으로 전송됩니다.</p>
+          </div>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+          ${processedHtml}
+        </div>
       </div>
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  const result = await transporter.sendMail(mailOptions);
+  console.log('HTML email sent successfully:', result.messageId);
+  return result;
 }
