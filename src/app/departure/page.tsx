@@ -38,6 +38,9 @@ export default function DeparturePage() {
   const [message, setMessage] = useState('');
   const [withdrawalLimits, setWithdrawalLimits] = useState<any>(null);
   const [userId, setUserId] = useState<string>('');
+  const [bankName, setBankName] = useState<string>('');
+  const [accountNumber, setAccountNumber] = useState<string>('');
+  const [accountHolder, setAccountHolder] = useState<string>('');
 
   // Funding withdrawal rules
   const getFundingWithdrawalInfo = (fundingId: string) => {
@@ -169,6 +172,11 @@ export default function DeparturePage() {
       return;
     }
 
+    if (!bankName || !accountNumber || !accountHolder) {
+      setMessage('은행명, 계좌번호, 예금주명을 모두 입력해주세요.');
+      return;
+    }
+
     const amount = parseFloat(withdrawAmount);
     const funding = fundingIncomes.find(f => f.fundingId === selectedFunding);
     
@@ -210,7 +218,12 @@ export default function DeparturePage() {
         },
         body: JSON.stringify({
           amount,
-          fundingId: selectedFunding
+          fundingId: selectedFunding,
+          bankInfo: {
+            bankName,
+            accountNumber,
+            accountHolder
+          }
         })
       });
       
@@ -220,6 +233,9 @@ export default function DeparturePage() {
         setMessage('출금 요청이 성공적으로 제출되었습니다. 관리자가 검토 후 처리됩니다.');
         setWithdrawAmount('');
         setSelectedFunding('');
+        setBankName('');
+        setAccountNumber('');
+        setAccountHolder('');
         
         // 출금 제한 정보 다시 로드
         loadWithdrawalLimits();
@@ -603,17 +619,17 @@ export default function DeparturePage() {
                         <div className="text-sm bg-gray-700 p-3 rounded-md border">
                           <div className="flex justify-between items-center">
                             <span className="text-gray-300">출금 금액:</span>
-                            <span className="text-white font-semibold">{parseFloat(withdrawAmount).toLocaleString()}원</span>
+                            <span className="text-white font-semibold">{formatKRW(parseFloat(withdrawAmount))}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-gray-300">수수료:</span>
                             <span className={`font-semibold ${withdrawalLimits.isFirstWithdrawalFree ? 'text-green-400' : 'text-yellow-400'}`}>
-                              {withdrawalLimits.isFirstWithdrawalFree ? '무료 (첫 출금)' : `${calculateFee(parseFloat(withdrawAmount)).toLocaleString()}원`}
+                              {withdrawalLimits.isFirstWithdrawalFree ? '무료 (첫 출금)' : formatKRW(calculateFee(parseFloat(withdrawAmount)))}
                             </span>
                           </div>
                           <div className="flex justify-between items-center border-t border-gray-600 pt-2 mt-2">
                             <span className="text-gray-300">실제 받을 금액:</span>
-                            <span className="text-green-400 font-bold text-lg">{getFinalAmount(parseFloat(withdrawAmount)).toLocaleString()}원</span>
+                            <span className="text-green-400 font-bold text-lg">{formatKRW(getFinalAmount(parseFloat(withdrawAmount)))}</span>
                           </div>
                         </div>
                       )}
@@ -652,6 +668,54 @@ export default function DeparturePage() {
                     </div>
                   );
                 })()}
+
+                {/* Bank Information Section */}
+                <div className="bg-gray-800 rounded-lg p-6 mb-4">
+                  <h3 className="text-lg font-bold text-white mb-4">계좌 정보</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        은행명
+                      </label>
+                      <input
+                        type="text"
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
+                        placeholder="예: 국민은행"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
+                        style={{ fontSize: '16px' }} // iOS 줌 방지
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        계좌번호
+                      </label>
+                      <input
+                        type="text"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        placeholder="예: 123456-78-901234"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
+                        style={{ fontSize: '16px' }} // iOS 줌 방지
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        예금주명
+                      </label>
+                      <input
+                        type="text"
+                        value={accountHolder}
+                        onChange={(e) => setAccountHolder(e.target.value)}
+                        placeholder="예: 홍길동"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
+                        style={{ fontSize: '16px' }} // iOS 줌 방지
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 <button
                   onClick={handleWithdrawal}
