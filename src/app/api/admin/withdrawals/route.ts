@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         );
       }
       
-      user = await UserService.findById(userId);
+      user = await UserService.findById(userId.toString());
       console.log('Admin check - found user by ID:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
     }
     console.log('Admin check - found user:', user ? { id: user.id, email: user.email, isAdmin: user.isAdmin } : 'null');
@@ -80,7 +80,6 @@ export async function GET(request: NextRequest) {
         { 
           message: 'Forbidden - Admin access required', 
           debug: { 
-            userId, 
             parsedUserId: parseInt(decoded.userId),
             foundUser: !!user, 
             isAdmin: user?.isAdmin,
@@ -96,7 +95,7 @@ export async function GET(request: NextRequest) {
     
     // Add user and funding details to each withdrawal
     const withdrawalsWithDetails = await Promise.all(withdrawals.map(async (withdrawal) => {
-      const user = await UserService.findById(withdrawal.userId);
+      const user = await UserService.findById(withdrawal.userId.toString());
       const funding = fundingOptions.find(f => `funding-${f.id}` === withdrawal.fundingId);
       return {
         ...withdrawal,
@@ -154,7 +153,7 @@ export async function PATCH(request: NextRequest) {
           { status: 403 }
         );
       }
-      user = await UserService.findById(userId);
+      user = await UserService.findById(userId.toString());
     }
     
     if (!user?.isAdmin) {

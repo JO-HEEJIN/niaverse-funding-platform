@@ -256,7 +256,7 @@ async function sendWithdrawalNotificationEmail(data: {
     accountHolder: string;
   };
 }) {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     host: 'email-smtp.us-east-2.amazonaws.com',
     port: 587,
     secure: false,

@@ -18,6 +18,23 @@ interface WithdrawalRequest {
   fundingUnit: string;
 }
 
+// Helper function to extract bank info from adminNotes
+function extractBankInfo(adminNotes?: string): { bankName?: string; accountNumber?: string; accountHolder?: string } | null {
+  if (!adminNotes) return null;
+  
+  // Pattern to match bank info in adminNotes
+  const bankInfoMatch = adminNotes.match(/계좌: ([^ ]+) ([^ ]+) \(([^)]+)\)/);
+  if (bankInfoMatch) {
+    return {
+      bankName: bankInfoMatch[1],
+      accountNumber: bankInfoMatch[2],
+      accountHolder: bankInfoMatch[3]
+    };
+  }
+  
+  return null;
+}
+
 interface Purchase {
   id: string;
   userId: string;
@@ -327,6 +344,33 @@ export default function AdminPage() {
                       </div>
                     </div>
 
+                    {/* Bank Information */}
+                    {(() => {
+                      const bankInfo = extractBankInfo(withdrawal.adminNotes);
+                      if (bankInfo) {
+                        return (
+                          <div className="mb-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                            <p className="text-sm font-medium text-gray-400 mb-2">입금 계좌 정보</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div>
+                                <p className="text-xs text-gray-500">은행명</p>
+                                <p className="text-white font-medium">{bankInfo.bankName}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500">계좌번호</p>
+                                <p className="text-white font-medium font-mono">{bankInfo.accountNumber}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500">예금주</p>
+                                <p className="text-white font-medium">{bankInfo.accountHolder}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+
                     {withdrawal.status === 'pending' ? (
                       <div className="flex space-x-4">
                         <button
@@ -364,9 +408,55 @@ export default function AdminPage() {
                           </div>
                         </div>
                         {withdrawal.adminNotes && (
-                          <p className="mt-2 text-sm text-gray-400">
-                            메모: {withdrawal.adminNotes}
-                          </p>
+                          <div className="mt-3">
+                            <p className="text-sm font-medium text-gray-400 mb-1">상세 정보</p>
+                            {(() => {
+                              const bankInfo = extractBankInfo(withdrawal.adminNotes);
+                              if (bankInfo) {
+                                // Extract withdrawal details from adminNotes
+                                const detailsMatch = withdrawal.adminNotes.match(/출금 요청([^-]*)?\s*-\s*출금량: ([^,]+), 수수료: ([^,]+), 실수령액: ([^-]+)/);
+                                const isFirstWithdrawal = withdrawal.adminNotes.includes('첫 출금 - 수수료 무료');
+                                
+                                return (
+                                  <div className="space-y-2">
+                                    <div className="p-3 bg-gray-800 rounded-lg text-sm">
+                                      {detailsMatch && (
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                                          <div>
+                                            <p className="text-xs text-gray-500">출금량</p>
+                                            <p className="text-white font-medium">{detailsMatch[2]}</p>
+                                          </div>
+                                          <div>
+                                            <p className="text-xs text-gray-500">수수료</p>
+                                            <p className="text-white font-medium">
+                                              {isFirstWithdrawal ? '무료 (첫 출금)' : detailsMatch[3]}
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <p className="text-xs text-gray-500">실수령액</p>
+                                            <p className="text-green-400 font-medium">{detailsMatch[4]}</p>
+                                          </div>
+                                        </div>
+                                      )}
+                                      <div className="border-t border-gray-700 pt-2">
+                                        <p className="text-xs text-gray-500 mb-1">입금 계좌</p>
+                                        <p className="text-white">
+                                          {bankInfo.bankName} {bankInfo.accountNumber} ({bankInfo.accountHolder})
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              
+                              // Fallback to original display if parsing fails
+                              return (
+                                <p className="text-sm text-gray-400">
+                                  {withdrawal.adminNotes}
+                                </p>
+                              );
+                            })()}
+                          </div>
                         )}
                       </div>
                     )}
