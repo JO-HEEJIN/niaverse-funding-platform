@@ -123,13 +123,33 @@ export default function DeparturePage() {
           };
         }
 
-        acc[purchase.fundingId].totalIncome += purchase.accumulatedIncome || 0;
+        // Ensure accumulatedIncome is a valid number
+        const accumulatedIncome = typeof purchase.accumulatedIncome === 'string' 
+          ? parseFloat(purchase.accumulatedIncome) 
+          : purchase.accumulatedIncome;
+        acc[purchase.fundingId].totalIncome += isNaN(accumulatedIncome) ? 0 : accumulatedIncome;
         acc[purchase.fundingId].purchases.push(purchase);
         
         return acc;
       }, {} as Record<string, FundingIncome>);
 
-      setFundingIncomes(Object.values(incomeByFunding));
+      const incomeArray = Object.values(incomeByFunding);
+      
+      // Debug logging
+      console.log('Departure Debug:', {
+        purchases: purchases.map(p => ({
+          fundingId: p.fundingId,
+          accumulatedIncome: p.accumulatedIncome,
+          type: typeof p.accumulatedIncome
+        })),
+        incomeByFunding: incomeArray.map(income => ({
+          fundingId: income.fundingId,
+          totalIncome: income.totalIncome,
+          type: typeof income.totalIncome
+        }))
+      });
+      
+      setFundingIncomes(incomeArray);
     } catch (error) {
       console.error('Error loading incomes:', error);
     }

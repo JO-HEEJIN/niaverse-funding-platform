@@ -34,9 +34,15 @@ export async function GET(request: NextRequest) {
     
     // Add funding details to each purchase
     const purchasesWithDetails = approvedPurchases.map((purchase: Record<string, any>) => {
-      const funding = fundingOptions.find(f => f.id === purchase.fundingId);
+      // Extract funding ID from fundingId (remove "funding-" prefix)
+      const fundingIdNumber = purchase.fundingId?.replace('funding-', '') || '';
+      const funding = fundingOptions.find(f => f.id === fundingIdNumber);
+      
       return {
         ...purchase,
+        // Ensure price and accumulatedIncome are numbers
+        price: typeof purchase.price === 'string' ? parseFloat(purchase.price) : (purchase.price || 0),
+        accumulatedIncome: typeof purchase.accumulatedIncome === 'string' ? parseFloat(purchase.accumulatedIncome) : (purchase.accumulatedIncome || 0),
         fundingTitle: funding?.title || 'Unknown',
         fundingUnit: funding?.unit || 'Won'
       };

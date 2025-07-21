@@ -2,15 +2,25 @@
 
 // Format Korean Won currency with thousand separators
 export function formatKRW(amount: number | string): string {
+  // If already formatted, return as is
+  if (typeof amount === 'string' && amount.includes('₩')) {
+    return amount;
+  }
+  
   // Ensure we're working with a clean number
   let numericAmount: number;
   
   if (typeof amount === 'string') {
-    // Remove any existing currency symbols and non-numeric characters except decimal point
+    // Remove any existing currency symbols and non-numeric characters except decimal point and minus
     const cleanString = amount.replace(/[₩,\s]/g, '');
-    numericAmount = parseFloat(cleanString) || 0;
+    numericAmount = parseFloat(cleanString);
   } else {
-    numericAmount = amount || 0;
+    numericAmount = amount;
+  }
+  
+  // Check for NaN and default to 0
+  if (isNaN(numericAmount) || numericAmount === null || numericAmount === undefined) {
+    numericAmount = 0;
   }
   
   // Ensure we have a valid number and remove any decimals for currency display
@@ -21,17 +31,24 @@ export function formatKRW(amount: number | string): string {
 
 // Format coin amounts (remove decimals, add thousand separators)
 export function formatCoinAmount(amount: number | string, unit: string = 'Doge'): string {
+  // If already formatted with the same unit, return as is
+  if (typeof amount === 'string' && amount.includes(unit)) {
+    return amount;
+  }
+  
   // Ensure we have a valid number
   let numericAmount: number;
   
   if (typeof amount === 'string') {
-    numericAmount = parseFloat(amount) || 0;
+    // Clean string by removing unit names and commas
+    const cleanString = amount.replace(/[,\s]/g, '').replace(/[a-zA-Z]/g, '');
+    numericAmount = parseFloat(cleanString);
   } else {
-    numericAmount = amount || 0;
+    numericAmount = amount;
   }
   
   // Check for NaN and default to 0
-  if (isNaN(numericAmount)) {
+  if (isNaN(numericAmount) || numericAmount === null || numericAmount === undefined) {
     numericAmount = 0;
   }
   

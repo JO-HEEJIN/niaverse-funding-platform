@@ -8,12 +8,30 @@ interface DataCenterProductProps {
 }
 
 export default function DataCenterProduct({ purchases, totalIncome }: DataCenterProductProps) {
-  // Calculate totals with proper number handling
-  const totalAmount = purchases.reduce((sum, p) => sum + (typeof p.price === 'number' ? p.price : 0), 0);
+  // Calculate totals with proper number handling and validation
+  const totalAmount = purchases.reduce((sum, p) => {
+    const price = typeof p.price === 'string' ? parseFloat(p.price) : p.price;
+    return sum + (isNaN(price) ? 0 : price);
+  }, 0);
+  
   const purchaseAmount = totalAmount; // Same as total amount
   
-  // Ensure totalIncome is a clean number
-  const cleanTotalIncome = typeof totalIncome === 'number' ? totalIncome : 0;
+  // Ensure totalIncome is a clean number with thorough validation
+  let cleanTotalIncome = 0;
+  if (typeof totalIncome === 'number' && !isNaN(totalIncome)) {
+    cleanTotalIncome = totalIncome;
+  } else if (typeof totalIncome === 'string') {
+    const parsed = parseFloat(totalIncome);
+    cleanTotalIncome = isNaN(parsed) ? 0 : parsed;
+  }
+  
+  // Debug logging (remove in production)
+  console.log('DataCenter Debug:', {
+    totalAmount,
+    cleanTotalIncome,
+    originalTotalIncome: totalIncome,
+    purchases: purchases.map(p => ({ price: p.price, accumulatedIncome: p.accumulatedIncome }))
+  });
   
   return (
     <div className="investment-card bg-gradient-to-br from-blue-600/20 to-blue-800/30 backdrop-blur-sm border border-blue-400/20 rounded-lg p-4 sm:p-6">
