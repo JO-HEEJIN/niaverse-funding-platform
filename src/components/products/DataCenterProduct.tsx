@@ -69,6 +69,16 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
         </div>
       </div>
       
+      <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
+        <p className="text-gray-400 text-sm mb-2">Market Performance</p>
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <span className="text-gray-400">24h Change</span>
+            <span className="text-green-400">+5.23%</span>
+          </div>
+        </div>
+      </div>
+      
       <div className="mt-4 pt-4 border-t border-gray-700">
         <p className="text-sm text-gray-400">
           Your data center investment is providing stable returns from cloud infrastructure services.
