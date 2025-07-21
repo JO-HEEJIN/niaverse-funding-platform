@@ -520,23 +520,21 @@ export default function AdminPage() {
                         <div>
                           <p className="text-gray-400 text-sm">구매 금액</p>
                           <p className="text-xl font-bold text-green-400">
-                            {(() => {
-                              if (purchase.fundingId === 'funding-1') {
-                                // Doge: 실제 구매 금액 기준으로 구매한 Doge 수량 계산
-                                // 1,000원 = 1 Doge로 가정
-                                const dogeAmount = purchase.price / 1000;
-                                return `${dogeAmount.toLocaleString()} Doge`;
-                              } else if (purchase.fundingId === 'funding-3') {
-                                // VAST: 실제 구매 금액 기준으로 구매한 VAST 수량 계산
-                                // 1,000원 = 1 VAST로 가정
-                                const vastAmount = purchase.price / 1000;
-                                return `${vastAmount.toLocaleString()} VAST`;
-                              } else {
-                                // Data Center: 원화로 표시
-                                return `${purchase.price.toLocaleString()} 원`;
-                              }
-                            })()}
+                            {purchase.price.toLocaleString()} 원
                           </p>
+                          {(purchase.fundingId === 'funding-1' || purchase.fundingId === 'funding-3') && (
+                            <p className="text-sm text-gray-300 mt-1">
+                              {(() => {
+                                if (purchase.fundingId === 'funding-1') {
+                                  const dogeAmount = purchase.price / 1000;
+                                  return `≈ ${dogeAmount.toLocaleString()} Doge`;
+                                } else if (purchase.fundingId === 'funding-3') {
+                                  const vastAmount = purchase.price / 1000;
+                                  return `≈ ${vastAmount.toLocaleString()} VAST`;
+                                }
+                              })()}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <p className="text-gray-400 text-sm">구매 날짜</p>
