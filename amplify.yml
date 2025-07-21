@@ -15,7 +15,14 @@ frontend:
       commands:
         - echo "Building Next.js application..."
         - echo "Creating .env file from Amplify environment variables..."
-        - env | grep -E '^(DATABASE_URL|JWT_SECRET|SMTP_|NODE_ENV)' > .env.production.local || true
+        - echo "DATABASE_URL=$DATABASE_URL" > .env.production.local
+        - echo "JWT_SECRET=$JWT_SECRET" >> .env.production.local
+        - echo "SMTP_HOST=$SMTP_HOST" >> .env.production.local
+        - echo "SMTP_PORT=$SMTP_PORT" >> .env.production.local
+        - echo "SMTP_USER=$SMTP_USER" >> .env.production.local
+        - echo "SMTP_PASS=$SMTP_PASS" >> .env.production.local
+        - echo "SMTP_SECURE=$SMTP_SECURE" >> .env.production.local
+        - echo "NODE_ENV=$NODE_ENV" >> .env.production.local
         - echo "Environment variables created:"
         - cat .env.production.local || true
         - npm run build

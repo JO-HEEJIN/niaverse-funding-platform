@@ -7,6 +7,7 @@ export async function GET() {
     database: 'unknown',
     environment: process.env.NODE_ENV,
     databaseUrl: process.env.DATABASE_URL ? 'configured' : 'missing',
+    amplifyEnv: process.env.DATABASE_URL ? 'loaded' : 'not-loaded',
   };
 
   try {
