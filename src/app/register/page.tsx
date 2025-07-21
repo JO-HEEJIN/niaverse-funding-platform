@@ -7,13 +7,13 @@ import { z } from 'zod';
 import Link from 'next/link';
 
 const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().email('올바른 이메일 주소를 입력해주세요.'),
+  password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다.'),
   confirmPassword: z.string(),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  phone: z.string().regex(/^[0-9]{10,11}$/, 'Phone number must be 10-11 digits'),
+  name: z.string().min(2, '성명은 2자 이상이어야 합니다.'),
+  phone: z.string().regex(/^[0-9]{10,11}$/, '전화번호는 10-11자리 숫자여야 합니다.'),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "비밀번호가 일치하지 않습니다.",
   path: ["confirmPassword"],
 });
 
@@ -48,12 +48,12 @@ export default function RegisterPage() {
       const result = await response.json();
 
       if (response.ok) {
-        setMessage('Registration successful! You can now log in.');
+        setMessage('회원가입이 완료되었습니다! 이제 로그인하실 수 있습니다.');
       } else {
-        setMessage(result.message || 'Registration failed');
+        setMessage(result.message || '회원가입에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
-      setMessage('Network error. Please try again.');
+      setMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
