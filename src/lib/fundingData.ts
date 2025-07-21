@@ -22,7 +22,7 @@ export interface FundingOption {
 
 export const fundingOptions: FundingOption[] = [
   {
-    id: '1',
+    id: 'funding-1',
     title: '펀딩 I',
     description: '도지코인 채굴 사업으로 안정적인 수익을 얻으세요. 최신 NIA Cloud 기술과 친환경 에너지를 활용하여 글로벌 파트너십을 통한 안정적 수익을 제공합니다.',
     image: '/api/placeholder/400/300',
@@ -56,7 +56,7 @@ export const fundingOptions: FundingOption[] = [
     ],
   },
   {
-    id: '2',
+    id: 'funding-2',
     title: '펀딩 II',
     description: '태양광 기반 데이터센터는 전기를 무상 공급 없이 연평균 수익을 향상시키며, 친환경적이고 장기적인 차익 가능성이 높습니다. 전기료 변동에 영향을 받지 않아 예측 가능한 수익 구조를 가지고 있으며, 초기 투자 이후 운영 비용이 크게 감소합니다. 데이터센터 운영자들은 커져만가는 많은 컴퓨팅 애플리케이션의 중기에 따라 에너지 효율성을 높이기 위해 수년 기술을 접목하고 있습니다. Dell/Oro Group에 따르면, 기업들이 클라우드 서비스를 더욱 많이 도입하고, 인공지능(AI)을 활용하여 고급 분석 및 자동화된 의사 결정을 강화하며, 블록체인 및 앞으로의 애플리케이션을 활성화함에 따라 수년 시장의 매출은 2017년부터 지 20년 달러에 이를 것으로 예상되며, 2020년부터 2027년까지 연평균 60% 성장할 것으로 보입니다.',
     image: '/api/placeholder/400/300',
@@ -82,7 +82,7 @@ export const fundingOptions: FundingOption[] = [
     ],
   },
   {
-    id: '3',
+    id: 'funding-3',
     title: '펀딩 III',
     description: '디지털 참여 혁신 플랫폼으로 DeFi 보상 시스템을 통해 연 20% 유동성 인센티브를 제공합니다. 단일 토큰 스테이킹으로 간편하게 수익을 얻으세요.',
     image: '/api/placeholder/400/300',
