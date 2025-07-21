@@ -93,31 +93,31 @@ export default function UpdateFundingPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-md mt-10 p-4">
+    <div className="container mx-auto max-w-md mt-10 p-6 bg-white min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Update User Funding</h1>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             User Email
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Funding ID
           </label>
           <select
             value={fundingId}
             onChange={(e) => setFundingId(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="funding-1">funding-1 (Doge Coin Mining)</option>
             <option value="funding-2">funding-2 (Data Center)</option>
@@ -129,14 +129,14 @@ export default function UpdateFundingPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             {fundingInfo.amountLabel}
           </label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder={fundingInfo.isQuantity ? "Enter quantity" : "Enter amount in KRW"}
             step={fundingInfo.isQuantity ? "1" : "1000"}
             required
@@ -149,14 +149,14 @@ export default function UpdateFundingPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             {fundingInfo.incomeLabel}
           </label>
           <input
             type="number"
             value={accumulatedIncome}
             onChange={(e) => setAccumulatedIncome(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-black bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder={fundingInfo.isQuantity ? "Enter income quantity" : "Enter income in KRW"}
             step={fundingInfo.isQuantity ? "0.01" : "1000"}
             required
