@@ -371,7 +371,50 @@ export default function ContractPage() {
 
                 {/* Contract Terms */}
                 <div className="bg-white rounded-lg p-6 mb-8 text-sm text-gray-800 max-h-96 overflow-y-auto">
-                  <h4 className="text-lg font-bold text-gray-900 mb-4 text-center">49인 이하 투자조합 계약서</h4>
+                  {/* VAST Coin 특별 계약서 PDF */}
+                  {purchaseData.fundingTitle === 'VAST' ? (
+                    <div className="text-center">
+                      <h4 className="text-lg font-bold text-gray-900 mb-4">바스트 코인 확약서</h4>
+                      <div className="mb-4">
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 mb-4">
+                          <iframe
+                            src="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf#toolbar=1&navpanes=1&scrollbar=1&page=1&view=FitH"
+                            width="100%"
+                            height="500px"
+                            className="border rounded-lg"
+                            title="바스트 코인 확약서"
+                          >
+                            <div className="text-center p-8">
+                              <p className="mb-4 text-gray-700">PDF를 표시할 수 없습니다.</p>
+                              <a 
+                                href="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                📄 PDF 다운로드하기
+                              </a>
+                            </div>
+                          </iframe>
+                        </div>
+                        <div className="text-center">
+                          <a 
+                            href="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-4 py-2 text-sm text-blue-600 hover:text-blue-800 border border-blue-600 hover:border-blue-800 rounded-lg transition-colors"
+                          >
+                            📄 새 창에서 PDF 보기
+                          </a>
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-600 mb-4">
+                        <p>위의 바스트 코인 확약서를 검토하시고 동의하시면 아래 계약 정보를 작성해주세요.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <h4 className="text-lg font-bold text-gray-900 mb-4 text-center">49인 이하 투자조합 계약서</h4>
                   <div className="space-y-4">
                     <p>
                       본 계약은 투자자(이하 "조합원")와 윤정훈(이하 "업무집행자")이 상호 신뢰와 협력을 바탕으로 「벤처투자 촉진에 관한 법률」 제19조 및 관련 법령에 의거하여 49인 이하의 사적 투자조합(이하 "조합")을 설립하고, 공동 출자에 따른 투자활동 및 권리·의무의 사항을 규정함을 목적으로 다음과 같이 체결한다.
@@ -455,6 +498,8 @@ export default function ContractPage() {
                       </div>
                     </div>
                   </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Contract Form */}
