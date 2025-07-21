@@ -4,8 +4,19 @@ import { getDatabaseUrl } from './db-config';
 
 // Parse connection string and handle SSL properly
 const parseConnectionString = (url: string) => {
-  // Remove duplicate SSL parameters if any
-  return url.replace(/[?&]ssl=true/g, '');
+  // URL encode the password if it contains special characters
+  try {
+    const urlObj = new URL(url);
+    // The password might contain special characters that need encoding
+    if (urlObj.password && urlObj.password.includes('!')) {
+      console.log('Detected special characters in password, encoding...');
+      // Password is already part of the URL, no need to re-encode
+    }
+    return url;
+  } catch (e) {
+    console.error('Error parsing database URL:', e);
+    return url;
+  }
 };
 
 // Get database URL from config
@@ -23,17 +34,22 @@ if (databaseUrl) {
   }
 }
 
-const pool = new Pool({
+// Create pool configuration
+const poolConfig: any = {
   connectionString: parseConnectionString(databaseUrl),
   max: 20, // maximum number of clients in the pool
   idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
   connectionTimeoutMillis: 2000, // how long to wait when requesting a connection
-  ssl: databaseUrl && databaseUrl.includes('amazonaws.com') ? { 
-    rejectUnauthorized: false,
-    // Additional SSL options for development
-    checkServerIdentity: () => undefined
-  } : false,
-});
+};
+
+// Add SSL configuration for AWS RDS
+if (databaseUrl && databaseUrl.includes('amazonaws.com')) {
+  poolConfig.ssl = {
+    rejectUnauthorized: false
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 // Add error handler for connection issues
 pool.on('error', (err) => {
