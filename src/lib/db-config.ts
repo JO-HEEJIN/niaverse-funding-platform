@@ -9,7 +9,8 @@ export const getDatabaseUrl = () => {
   
   // Fallback for production (temporary)
   if (process.env.NODE_ENV === 'production') {
-    return 'postgresql://niaverse_admin:Qlalfqjsgh1!@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require';
+    // URL encode the password: ! becomes %21
+    return 'postgresql://niaverse_admin:Qlalfqjsgh1%21@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require';
   }
   
   // Local development
