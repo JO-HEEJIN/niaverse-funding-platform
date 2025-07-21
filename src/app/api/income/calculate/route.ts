@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     const now = new Date();
     let updatedCount = 0;
     
+    // Return rates for non-Doge investments
     // Monthly return rate: 5% per month
     // Daily return rate: 5% / 31 days = 0.161290% per day
     const MONTHLY_RETURN_RATE = 0.05;
@@ -58,9 +59,10 @@ export async function POST(request: NextRequest) {
         let principal = 0;
         
         if (funding.id === '1') {
-          // Doge coin: Daily income based on investment amount (price paid)
-          principal = purchase.price;
-          dailyIncome = principal * DAILY_RETURN_RATE * daysDiff;
+          // Doge coin: Daily income based on mining units (quantity)
+          // Each mining unit generates 2 Doge per day
+          const miningUnits = purchase.quantity || 0;
+          dailyIncome = miningUnits * 2 * daysDiff; // mining units × 2 × days = total Doge generated
         } else if (funding.id === '2') {
           // Data Center: Daily income based on investment amount
           principal = purchase.price;
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest) {
 }
 
 // This endpoint could be called by a cron job or admin panel
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json({
     message: 'Use POST to calculate income'
   });

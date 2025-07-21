@@ -11,8 +11,30 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
   // Calculate total mining units (quantity represents mining machines)
   const totalQuantity = purchases.reduce((sum, p) => sum + (typeof p.quantity === 'number' ? p.quantity : 0), 0);
   
-  // Ensure totalIncome is a valid number, default to 0 if NaN
-  const validTotalIncome = typeof totalIncome === 'number' && !isNaN(totalIncome) ? totalIncome : 0;
+  // Calculate days since first purchase to determine accumulated income
+  const calculateAccumulatedIncome = () => {
+    if (purchases.length === 0) return 0;
+    
+    // Get earliest purchase date
+    const earliestPurchase = purchases.reduce((earliest, current) => {
+      const currentDate = new Date(current.timestamp);
+      const earliestDate = new Date(earliest.timestamp);
+      return currentDate < earliestDate ? current : earliest;
+    });
+    
+    const startDate = new Date(earliestPurchase.timestamp);
+    const currentDate = new Date();
+    
+    // Calculate days passed since first purchase
+    const daysPassed = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Daily income = mining units × 2 (each mining unit generates 2 Doge/day)
+    // Accumulated income = mining units × 2 × days passed
+    return totalQuantity * 2 * Math.max(daysPassed, 0);
+  };
+  
+  const accumulatedIncome = calculateAccumulatedIncome();
+  const dailyIncomeRate = totalQuantity * 2; // Each mining unit generates 2 Doge/day
   
   return (
     <div className="investment-card bg-gradient-to-br from-yellow-600/20 to-yellow-800/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-4 sm:p-6">
@@ -33,7 +55,7 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
           <p className="stat-value text-xl font-bold text-green-400 overflow-hidden text-ellipsis">
-            {formatCoinAmount(validTotalIncome, 'Doge')}
+            {formatCoinAmount(accumulatedIncome, 'Doge')}
           </p>
         </div>
       </div>
@@ -41,9 +63,14 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
       <div className="bg-gray-800/50 rounded-lg p-4">
         <p className="text-gray-400 text-sm mb-2">Daily Income Rate</p>
         <div className="flex items-baseline">
-          <span className="text-3xl font-bold text-yellow-400">100</span>
-          <span className="text-gray-400 ml-2">Doge/day per unit</span>
+          <span className="text-3xl font-bold text-yellow-400">{dailyIncomeRate}</span>
+          <span className="text-gray-400 ml-2">Doge/day</span>
         </div>
+        {totalQuantity > 0 && (
+          <p className="text-xs text-gray-500 mt-2">
+            {totalQuantity} mining × 2 Doge/day per unit
+          </p>
+        )}
       </div>
       
       <div className="mt-4 pt-4 border-t border-gray-700">
