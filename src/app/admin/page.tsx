@@ -522,16 +522,14 @@ export default function AdminPage() {
                           <p className="text-xl font-bold text-green-400">
                             {(() => {
                               if (purchase.fundingId === 'funding-1') {
-                                // Doge: quantity * basePrice로 계산된 실제 구매량 표시
-                                // funding-1 basePrice는 1,000,000원당 1000 Doge
-                                const dogePerUnit = 1000; // 1단위당 1000 Doge
-                                const dogeAmount = purchase.quantity * dogePerUnit;
+                                // Doge: 실제 구매 금액 기준으로 구매한 Doge 수량 계산
+                                // 1,000원 = 1 Doge로 가정
+                                const dogeAmount = purchase.price / 1000;
                                 return `${dogeAmount.toLocaleString()} Doge`;
                               } else if (purchase.fundingId === 'funding-3') {
-                                // VAST: quantity * basePrice로 계산된 실제 구매량 표시
-                                // funding-3 basePrice는 1,000,000원당 1000 VAST
-                                const vastPerUnit = 1000; // 1단위당 1000 VAST  
-                                const vastAmount = purchase.quantity * vastPerUnit;
+                                // VAST: 실제 구매 금액 기준으로 구매한 VAST 수량 계산
+                                // 1,000원 = 1 VAST로 가정
+                                const vastAmount = purchase.price / 1000;
                                 return `${vastAmount.toLocaleString()} VAST`;
                               } else {
                                 // Data Center: 원화로 표시
