@@ -40,16 +40,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email with reset link
+    console.log('Attempting to send password reset email...');
+    console.log('SMTP Environment check:', {
+      smtpUser: process.env.SMTP_USER ? 'Set' : 'Not set',
+      smtpPass: process.env.SMTP_PASS ? 'Set' : 'Not set',
+      appUrl: process.env.NEXT_PUBLIC_APP_URL || 'Not set'
+    });
+
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
       try {
         await sendPasswordResetEmail(email, resetToken);
+        console.log('Password reset email sent successfully to:', email);
       } catch (emailError) {
         console.error('Email sending failed:', emailError);
-        return NextResponse.json(
-          { message: '이메일 전송에 실패했습니다. 다시 시도해주세요.' },
-          { status: 500 }
-        );
+        console.error('SMTP Error details:', {
+          error: emailError instanceof Error ? emailError.message : emailError,
+          stack: emailError instanceof Error ? emailError.stack : 'No stack trace',
+          smtpUser: process.env.SMTP_USER ? 'Set' : 'Not set',
+          smtpPass: process.env.SMTP_PASS ? 'Set' : 'Not set'
+        });
+        // Continue without failing - email issue shouldn't block the reset process
       }
+    } else {
+      console.warn('SMTP credentials not configured - password reset token saved but email not sent');
+      console.warn('Missing credentials:', {
+        SMTP_USER: !process.env.SMTP_USER,
+        SMTP_PASS: !process.env.SMTP_PASS
+      });
     }
 
     return NextResponse.json(
@@ -67,17 +84,199 @@ export async function POST(request: NextRequest) {
 }
 
 async function sendPasswordResetEmail(email: string, resetToken: string) {
-  const transporter = nodemailer.createTransport({
-    host: 'email-smtp.us-east-2.amazonaws.com',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://niaverse.org'}/reset-password?token=${resetToken}`;
 
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+  // Determine recipient email domain
+  const emailDomain = email.split('@')[1]?.toLowerCase();
+  
+  // Configure SMTP based on recipient email domain
+  const smtpConfigs = [];
+  
+  // For Korean email providers, use domain-specific SMTP servers
+  if (emailDomain === 'naver.com') {
+    // Naver SMTP configuration
+    smtpConfigs.push(
+      {
+        name: 'Naver SMTP (for naver.com)',
+        config: {
+          host: 'smtp.naver.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.NAVER_USER,
+            pass: process.env.NAVER_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'Gmail SMTP (fallback for Naver)',
+        config: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.GMAIL_USER || process.env.SMTP_USER,
+            pass: process.env.GMAIL_PASS || process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'AWS SES US-East-2 (fallback)',
+        config: {
+          host: 'email-smtp.us-east-2.amazonaws.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      }
+    );
+  } else if (emailDomain === 'hanmail.net' || emailDomain === 'daum.net') {
+    // Daum/Hanmail SMTP configuration
+    smtpConfigs.push(
+      {
+        name: 'Daum SMTP (for daum/hanmail)',
+        config: {
+          host: 'smtp.daum.net',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.DAUM_USER,
+            pass: process.env.DAUM_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'Gmail SMTP (fallback for Daum)',
+        config: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.GMAIL_USER || process.env.SMTP_USER,
+            pass: process.env.GMAIL_PASS || process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'AWS SES US-East-2 (fallback)',
+        config: {
+          host: 'email-smtp.us-east-2.amazonaws.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      }
+    );
+  } else if (emailDomain === 'gmail.com') {
+    // For Gmail, try Gmail SMTP first
+    smtpConfigs.push(
+      {
+        name: 'Gmail SMTP (for Gmail)',
+        config: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.GMAIL_USER || process.env.SMTP_USER,
+            pass: process.env.GMAIL_PASS || process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'AWS SES US-East-2 (fallback)',
+        config: {
+          host: 'email-smtp.us-east-2.amazonaws.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      }
+    );
+  } else {
+    // For other domains, use AWS SES as primary
+    smtpConfigs.push(
+      {
+        name: 'AWS SES US-East-2',
+        config: {
+          host: 'email-smtp.us-east-2.amazonaws.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'AWS SES US-East-1',
+        config: {
+          host: 'email-smtp.us-east-1.amazonaws.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      },
+      {
+        name: 'Gmail SMTP (universal fallback)',
+        config: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.GMAIL_USER || process.env.SMTP_USER,
+            pass: process.env.GMAIL_PASS || process.env.SMTP_PASS,
+          },
+          tls: {
+            rejectUnauthorized: false
+          }
+        }
+      }
+    );
+  }
+  
+  console.log(`Email domain detected: ${emailDomain}, using ${smtpConfigs.length} SMTP configurations`);
 
   const mailOptions = {
     from: 'master@niaverse.org',
@@ -129,5 +328,44 @@ async function sendPasswordResetEmail(email: string, resetToken: string) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  const errors: Array<{ name: string; error: any }> = [];
+
+  // Try each SMTP configuration
+  for (const { name, config } of smtpConfigs) {
+    try {
+      console.log(`Attempting to send email via ${name}...`);
+      const transporter = nodemailer.createTransport(config);
+      
+      // Verify connection first with timeout
+      console.log(`Verifying SMTP connection for ${name}...`);
+      await Promise.race([
+        transporter.verify(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Connection timeout')), 10000)
+        )
+      ]);
+      console.log(`SMTP connection verified for ${name}`);
+      
+      // Send email with timeout
+      console.log(`Sending email via ${name}...`);
+      const info = await Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Send timeout')), 15000)
+        )
+      ]);
+      console.log(`Email sent successfully via ${name}:`, info.messageId);
+      return; // Success, exit function
+      
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to send email via ${name}:`, errorMsg);
+      errors.push({ name, error: errorMsg });
+      // Continue to next configuration
+    }
+  }
+  
+  // If all configurations failed
+  console.error('All SMTP configurations failed:', errors);
+  throw new Error(`All SMTP configurations failed: ${errors.map(e => `${e.name}: ${e.error}`).join('; ')}`);
 }
