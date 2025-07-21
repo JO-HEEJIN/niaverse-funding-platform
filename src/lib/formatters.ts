@@ -20,8 +20,22 @@ export function formatKRW(amount: number | string): string {
 }
 
 // Format coin amounts (remove decimals, add thousand separators)
-export function formatCoinAmount(amount: number, unit: string = 'Doge'): string {
-  return `${Math.floor(amount).toLocaleString('ko-KR')} ${unit}`;
+export function formatCoinAmount(amount: number | string, unit: string = 'Doge'): string {
+  // Ensure we have a valid number
+  let numericAmount: number;
+  
+  if (typeof amount === 'string') {
+    numericAmount = parseFloat(amount) || 0;
+  } else {
+    numericAmount = amount || 0;
+  }
+  
+  // Check for NaN and default to 0
+  if (isNaN(numericAmount)) {
+    numericAmount = 0;
+  }
+  
+  return `${Math.floor(numericAmount).toLocaleString('ko-KR')} ${unit}`;
 }
 
 // Format regular numbers with thousand separators

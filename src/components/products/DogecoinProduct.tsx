@@ -8,7 +8,11 @@ interface DogecoinProductProps {
 }
 
 export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProductProps) {
-  const totalQuantity = purchases.reduce((sum, p) => sum + p.quantity, 0);
+  // Calculate total mining units (quantity represents mining machines)
+  const totalQuantity = purchases.reduce((sum, p) => sum + (typeof p.quantity === 'number' ? p.quantity : 0), 0);
+  
+  // Ensure totalIncome is a valid number, default to 0 if NaN
+  const validTotalIncome = typeof totalIncome === 'number' && !isNaN(totalIncome) ? totalIncome : 0;
   
   return (
     <div className="investment-card bg-gradient-to-br from-yellow-600/20 to-yellow-800/30 backdrop-blur-sm border border-yellow-400/20 rounded-lg p-4 sm:p-6">
@@ -23,13 +27,13 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Investment</p>
           <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
-            {formatCoinAmount(totalQuantity, 'Doge')}
+            {formatCoinAmount(totalQuantity, 'mining')}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
           <p className="stat-value text-xl font-bold text-green-400 overflow-hidden text-ellipsis">
-            {formatCoinAmount(totalIncome, 'Doge')}
+            {formatCoinAmount(validTotalIncome, 'Doge')}
           </p>
         </div>
       </div>
