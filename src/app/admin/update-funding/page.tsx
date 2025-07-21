@@ -12,6 +12,46 @@ export default function UpdateFundingPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
+  // 펀딩 타입에 따른 설정
+  const getFundingInfo = (id: string) => {
+    switch (id) {
+      case 'funding-1':
+        return { 
+          name: 'Doge Coin Mining', 
+          unit: 'Doge', 
+          amountLabel: 'Quantity (Doge)', 
+          incomeLabel: 'Accumulated Income (Doge)',
+          isQuantity: true 
+        };
+      case 'funding-2':
+        return { 
+          name: 'Data Center', 
+          unit: '원', 
+          amountLabel: 'Amount (원)', 
+          incomeLabel: 'Accumulated Income (원)',
+          isQuantity: false 
+        };
+      case 'funding-3':
+        return { 
+          name: 'VAST Coin', 
+          unit: 'VAST', 
+          amountLabel: 'Quantity (VAST)', 
+          incomeLabel: 'Accumulated Income (VAST)',
+          isQuantity: true 
+        };
+      default:
+        return { 
+          name: 'Unknown', 
+          unit: '', 
+          amountLabel: 'Amount', 
+          incomeLabel: 'Accumulated Income',
+          isQuantity: false 
+        };
+    }
+  };
+
+  const fundingInfo = getFundingInfo(fundingId);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -79,34 +119,46 @@ export default function UpdateFundingPage() {
             onChange={(e) => setFundingId(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="funding-1">funding-1 (Doge)</option>
+            <option value="funding-1">funding-1 (Doge Coin Mining)</option>
             <option value="funding-2">funding-2 (Data Center)</option>
-            <option value="funding-3">funding-3 (VAST)</option>
+            <option value="funding-3">funding-3 (VAST Coin)</option>
           </select>
+          <p className="text-sm text-gray-500 mt-1">
+            Selected: {fundingInfo.name} ({fundingInfo.unit})
+          </p>
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Amount (원)
+            {fundingInfo.amountLabel}
           </label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
+            placeholder={fundingInfo.isQuantity ? "Enter quantity" : "Enter amount in KRW"}
+            step={fundingInfo.isQuantity ? "1" : "1000"}
             required
           />
+          {fundingInfo.isQuantity && (
+            <p className="text-sm text-blue-500 mt-1">
+              💡 For {fundingInfo.unit}, enter the quantity (number of coins/tokens)
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Accumulated Income (원)
+            {fundingInfo.incomeLabel}
           </label>
           <input
             type="number"
             value={accumulatedIncome}
             onChange={(e) => setAccumulatedIncome(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
+            placeholder={fundingInfo.isQuantity ? "Enter income quantity" : "Enter income in KRW"}
+            step={fundingInfo.isQuantity ? "0.01" : "1000"}
             required
           />
         </div>
@@ -129,11 +181,26 @@ export default function UpdateFundingPage() {
       )}
 
       <div className="mt-6 p-4 bg-gray-100 rounded-md">
-        <h3 className="font-semibold mb-2">노영수 업데이트 정보:</h3>
-        <p>Email: ysu1110@naver.com</p>
-        <p>Funding: funding-2 (데이터센터)</p>
-        <p>Amount: 30,000,000원</p>
-        <p>Income: 144,000원</p>
+        <h3 className="font-semibold mb-2">펀딩 타입별 입력 안내:</h3>
+        <div className="space-y-2 text-sm">
+          <div className="p-2 bg-blue-50 rounded">
+            <strong>funding-1 (Doge Coin):</strong> 수량으로 입력 (예: 1000 Doge)
+          </div>
+          <div className="p-2 bg-green-50 rounded">
+            <strong>funding-2 (Data Center):</strong> 원화로 입력 (예: 30,000,000원)
+          </div>
+          <div className="p-2 bg-purple-50 rounded">
+            <strong>funding-3 (VAST Coin):</strong> 수량으로 입력 (예: 5000 VAST)
+          </div>
+        </div>
+        
+        <div className="mt-4 p-3 bg-yellow-50 rounded">
+          <h4 className="font-semibold text-sm">노영수님 현재 데이터:</h4>
+          <p className="text-sm">Email: ysu1110@naver.com</p>
+          <p className="text-sm">Funding: funding-2 (데이터센터)</p>
+          <p className="text-sm">Amount: 30,000,000원 (30개)</p>
+          <p className="text-sm">Income: 144,000원</p>
+        </div>
       </div>
     </div>
   );
