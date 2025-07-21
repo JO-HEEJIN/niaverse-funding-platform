@@ -109,7 +109,9 @@ body {
   .stat-value {
     font-size: 1rem;
     font-weight: 600;
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
   
   .card-header h3 {
@@ -118,11 +120,15 @@ body {
   
   .income-display .income-value {
     font-size: 1rem;
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
   
   .vast-holdings .stat-value {
-    word-break: break-all;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
 }
 
@@ -135,6 +141,23 @@ body {
   .investment-cards-grid {
     gap: 2rem;
   }
+}
+
+/* Fix number display issues */
+.stat-value, .income-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  word-break: normal;
+}
+
+/* Prevent CSS content duplication */
+.stat-value::before,
+.stat-value::after,
+.income-value::before,
+.income-value::after {
+  content: none !important;
 }
 
 /* User profile page styling */

@@ -8,8 +8,12 @@ interface DataCenterProductProps {
 }
 
 export default function DataCenterProduct({ purchases, totalIncome }: DataCenterProductProps) {
-  const totalAmount = purchases.reduce((sum, p) => sum + p.price, 0);
-  const purchaseAmount = purchases.reduce((sum, p) => sum + p.price, 0);
+  // Calculate totals with proper number handling
+  const totalAmount = purchases.reduce((sum, p) => sum + (typeof p.price === 'number' ? p.price : 0), 0);
+  const purchaseAmount = totalAmount; // Same as total amount
+  
+  // Ensure totalIncome is a clean number
+  const cleanTotalIncome = typeof totalIncome === 'number' ? totalIncome : 0;
   
   return (
     <div className="investment-card bg-gradient-to-br from-blue-600/20 to-blue-800/30 backdrop-blur-sm border border-blue-400/20 rounded-lg p-4 sm:p-6">
@@ -23,20 +27,20 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
       <div className="investment-stats grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Amount</p>
-          <p className="stat-value text-lg font-bold text-white break-all">
+          <p className="stat-value text-lg font-bold text-white overflow-hidden text-ellipsis">
             {formatKRW(totalAmount)}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Purchase Amount</p>
-          <p className="stat-value text-lg font-bold text-blue-400 break-all">
+          <p className="stat-value text-lg font-bold text-blue-400 overflow-hidden text-ellipsis">
             {formatKRW(purchaseAmount)}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
-          <p className="stat-value text-lg font-bold text-green-400 break-all">
-            {formatKRW(totalIncome)}
+          <p className="stat-value text-lg font-bold text-green-400 overflow-hidden text-ellipsis">
+            {formatKRW(cleanTotalIncome)}
           </p>
         </div>
       </div>
@@ -47,8 +51,8 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
           <span className="text-sm text-gray-500">In Won</span>
         </div>
         <div className="bg-gray-900/50 rounded p-3">
-          <p className="income-value text-xl sm:text-2xl font-bold text-blue-400 break-all">
-            {formatKRW(totalIncome)}
+          <p className="income-value text-xl sm:text-2xl font-bold text-blue-400 overflow-hidden text-ellipsis">
+            {formatKRW(cleanTotalIncome)}
           </p>
           <span className="period text-gray-400 text-sm">/Mon</span>
         </div>

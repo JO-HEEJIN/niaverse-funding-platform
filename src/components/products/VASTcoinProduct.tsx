@@ -22,13 +22,13 @@ export default function VASTcoinProduct({ purchases, totalIncome }: VASTcoinProd
       <div className="vast-holdings grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Total Holdings</p>
-          <p className="stat-value text-xl font-bold text-white break-all">
+          <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
             {formatCoinAmount(totalQuantity, 'VAST')}
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Current Value</p>
-          <p className="stat-value text-xl font-bold text-purple-400 break-all">
+          <p className="stat-value text-xl font-bold text-purple-400 overflow-hidden text-ellipsis">
             {formatCoinAmount(totalIncome, 'VAST')}
           </p>
         </div>

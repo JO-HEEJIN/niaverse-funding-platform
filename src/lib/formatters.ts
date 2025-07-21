@@ -1,8 +1,22 @@
 // Number formatting utilities for the NIA Cloud platform
 
 // Format Korean Won currency with thousand separators
-export function formatKRW(amount: number): string {
-  return `₩${amount.toLocaleString('ko-KR')}`;
+export function formatKRW(amount: number | string): string {
+  // Ensure we're working with a clean number
+  let numericAmount: number;
+  
+  if (typeof amount === 'string') {
+    // Remove any existing currency symbols and non-numeric characters except decimal point
+    const cleanString = amount.replace(/[₩,\s]/g, '');
+    numericAmount = parseFloat(cleanString) || 0;
+  } else {
+    numericAmount = amount || 0;
+  }
+  
+  // Ensure we have a valid number and remove any decimals for currency display
+  const finalAmount = Math.floor(numericAmount);
+  
+  return `₩${finalAmount.toLocaleString('ko-KR')}`;
 }
 
 // Format coin amounts (remove decimals, add thousand separators)
