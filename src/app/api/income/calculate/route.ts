@@ -21,7 +21,17 @@ export async function POST(request: NextRequest) {
     }
     // If no auth header, still allow for backward compatibility during transition
     
-    const purchases = await PurchaseService.getAll();
+    let purchases;
+    try {
+      purchases = await PurchaseService.getAll();
+    } catch (dbError) {
+      console.error('Database error fetching purchases:', dbError);
+      return NextResponse.json(
+        { message: 'Database connection error' },
+        { status: 500 }
+      );
+    }
+    
     const now = new Date();
     let updatedCount = 0;
     
@@ -64,9 +74,14 @@ export async function POST(request: NextRequest) {
         const currentIncome = purchase.accumulatedIncome || 0;
         const newIncome = currentIncome + dailyIncome;
         
-        const success = await PurchaseService.updateIncome(purchase.id, newIncome);
-        if (success) {
-          updatedCount++;
+        try {
+          const success = await PurchaseService.updateIncome(purchase.id, newIncome);
+          if (success) {
+            updatedCount++;
+          }
+        } catch (updateError) {
+          console.error(`Error updating income for purchase ${purchase.id}:`, updateError);
+          // Continue with other purchases instead of failing completely
         }
       }
     }

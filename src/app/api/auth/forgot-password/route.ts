@@ -29,7 +29,15 @@ export async function POST(request: NextRequest) {
     const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hour from now
 
     // Save reset token to user
-    await UserService.savePasswordResetToken(user.id, resetToken, resetTokenExpiry);
+    try {
+      await UserService.savePasswordResetToken(user.id, resetToken, resetTokenExpiry);
+    } catch (dbError) {
+      console.error('Database error saving reset token:', dbError);
+      return NextResponse.json(
+        { message: '데이터베이스 오류가 발생했습니다. 관리자에게 문의하세요.' },
+        { status: 500 }
+      );
+    }
 
     // Send email with reset link
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {

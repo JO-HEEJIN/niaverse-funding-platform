@@ -79,16 +79,21 @@ export default function DashboardPage() {
       
       // First, calculate income to ensure latest data
       try {
-        await fetch('/api/income/calculate', {
+        const incomeResponse = await fetch('/api/income/calculate', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+        
+        if (!incomeResponse.ok) {
+          console.warn('Income calculation failed:', incomeResponse.status, incomeResponse.statusText);
+        }
         // Note: We don't wait for this to complete or handle errors
         // as it should not block the main loading
       } catch (incomeError) {
-        console.log('Income calculation skipped:', incomeError);
+        console.warn('Income calculation skipped due to error:', incomeError);
+        // Continue with loading purchases even if income calculation fails
       }
       
       const response = await fetch('/api/user/purchases', {

@@ -31,16 +31,25 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
 
-      const result = await response.json();
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse response:', jsonError);
+        setMessage('서버 응답을 처리할 수 없습니다.');
+        return;
+      }
 
       if (response.ok) {
         setIsSuccess(true);
         setMessage('비밀번호 재설정 링크가 이메일로 전송되었습니다.');
       } else {
-        setMessage(result.message || '오류가 발생했습니다.');
+        console.error('Forgot password API error:', response.status, result);
+        setMessage(result.message || `서버 오류가 발생했습니다. (${response.status})`);
       }
     } catch (error) {
-      setMessage('네트워크 오류가 발생했습니다.');
+      console.error('Network error in forgot password:', error);
+      setMessage('네트워크 연결에 문제가 있습니다. 잠시 후 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }

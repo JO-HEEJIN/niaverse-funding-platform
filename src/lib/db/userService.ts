@@ -109,14 +109,43 @@ export class UserService {
     }
   }
 
+  static async ensureResetTokenColumns(): Promise<void> {
+    const client = await pool.connect();
+    try {
+      // Check if columns exist and add them if they don't
+      await client.query(`
+        ALTER TABLE users 
+        ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;
+      `);
+      
+      // Create index if it doesn't exist
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users(reset_token) 
+        WHERE reset_token IS NOT NULL;
+      `);
+    } catch (error) {
+      console.error('Error ensuring reset token columns:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   static async savePasswordResetToken(userId: string, token: string, expiry: Date): Promise<boolean> {
     const client = await pool.connect();
     try {
+      // Ensure columns exist first
+      await this.ensureResetTokenColumns();
+      
       const result = await client.query(
         'UPDATE users SET reset_token = $1, reset_token_expiry = $2 WHERE id = $3',
         [token, expiry, userId]
       );
       return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error saving password reset token:', error);
+      throw error;
     } finally {
       client.release();
     }
