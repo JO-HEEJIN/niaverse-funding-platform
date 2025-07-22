@@ -31,10 +31,17 @@ export default function FundingPage({ params }: FundingPageProps) {
       return;
     }
 
+    // Debug logging
+    console.log('URL ID parameter:', id);
+    console.log('Available funding options:', fundingOptions.map(o => ({ id: o.id, title: o.title })));
+
     // Handle both formats: '1', '2', '3' and 'funding-1', 'funding-2', 'funding-3'
     const fundingOption = fundingOptions.find(option => 
       option.id === id || option.id === `funding-${id}`
     );
+    
+    console.log('Found funding option:', fundingOption);
+    
     if (fundingOption) {
       setFunding(fundingOption);
     }
@@ -330,8 +337,11 @@ export default function FundingPage({ params }: FundingPageProps) {
                     <div className="bg-gradient-to-br from-gray-700/30 to-gray-800/40 backdrop-blur-sm border border-gray-500/20 rounded-lg p-6">
                       <h4 className="text-lg font-medium text-white mb-4">구매 옵션</h4>
                       
+                      {/* Debug info */}
+                      {console.log('Rendering purchase section. Funding ID:', funding.id)}
+                      
                       {/* Funding 1 - Closed */}
-                      {funding.id === '1' && (
+                      {funding.id === 'funding-1' && (
                         <div className="text-center py-8">
                           <div className="bg-gray-600/30 border border-gray-500/40 rounded-lg p-6">
                             <h5 className="text-xl font-semibold text-red-400 mb-2">마감되었습니다</h5>
@@ -343,7 +353,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                       )}
 
                       {/* Funding 2 - Custom Price Only */}
-                      {funding.id === '2' && (
+                      {funding.id === 'funding-2' && (
                         <>
                           <div className="mb-4">
                             <label className="block text-sm font-medium text-white mb-2">
@@ -383,7 +393,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                       )}
 
                       {/* Funding 3 - VAST Coin KRW Input */}
-                      {funding.id === '3' && (
+                      {funding.id === 'funding-3' && (
                         <>
                           <div className="mb-4">
                             <label className="block text-sm font-medium text-white mb-2">
@@ -430,6 +440,21 @@ export default function FundingPage({ params }: FundingPageProps) {
                             VAST 코인 구매하기
                           </button>
                         </>
+                      )}
+                      
+                      {/* Fallback if no matching funding ID */}
+                      {funding.id !== 'funding-1' && funding.id !== 'funding-2' && funding.id !== 'funding-3' && (
+                        <div className="text-center py-8">
+                          <div className="bg-red-600/30 border border-red-500/40 rounded-lg p-6">
+                            <h5 className="text-xl font-semibold text-red-400 mb-2">Debug: Unknown Funding ID</h5>
+                            <p className="text-gray-300 text-sm">
+                              Funding ID: {funding.id}
+                            </p>
+                            <p className="text-gray-300 text-sm mt-2">
+                              Expected: funding-1, funding-2, or funding-3
+                            </p>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
