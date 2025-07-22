@@ -1,0 +1,443 @@
+{
+  "timestamp": "2025-07-22T05:02:00.030Z",
+  "totalProcessed": 87,
+  "success": 0,
+  "failed": 87,
+  "details": [
+    {
+      "email": "midmost44@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kang4229@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "catsocute77@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "catsocute77@naver.com \r\n",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "ks8132497@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "kwonyo7370@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "dkkh78@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "hanlsogi@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": " hanlsogi@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "zxz3600@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "min_you@kakao.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "gimdoil080@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": " kdh43120@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "catsign@empas.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "kstour12345@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "grlema@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "meeso623@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "kyyong3427@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "0112kig@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sksdhr55@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "tpwnsdl112@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "rdt1988@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "black8411@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "dbwls842635@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "fast2k2@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "joo576457@nate.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "joo576457@nate.com \r\n",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "redfoxnine@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "kimk0112k@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "nam134689@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sunitmd@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "clgud0514@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "payworld@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "yeonnniq@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "changnim@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "changnimb@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "abba23@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "seoyouseub@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sys5046@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sonja2486@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "ssh01029519494@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jayeongshin@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "else70@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "dayoung291@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "Hangsinhyun@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "smk9635@nate.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": " smk9635@nate.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "silver-iron@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "elman57e@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "1jongku@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "dbtjdrms123123@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "yjh36906@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "rhkdrb960@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "palefe84@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "gsangtop1@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "kl5787@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "shlee750315@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "da2312@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "  sinsung0204@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sinsung0204@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "  syrhym@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "syrhym@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "im2995@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "siver0604@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "nhicjjh@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "capenters76@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "wlgh2400@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "sh04249036@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jeongyj119@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jjung3760@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jungjjf892@gmail.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "saines1@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jsg5227@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "usher522@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "email0808@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "csoo1000@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": " csoo1000@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "cws07127@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "young-417157@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "free477@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "jjan011@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "chjs2805@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "00polaris00@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "Hyunju7254@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "hyunju7254@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "his7464@naver.com",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    },
+    {
+      "email": "mbmetal@hanmail.net",
+      "status": "error",
+      "error": "current transaction is aborted, commands ignored until end of transaction block"
+    }
+  ]
+}

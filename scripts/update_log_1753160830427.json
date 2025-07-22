@@ -1,0 +1,805 @@
+{
+  "timestamp": "2025-07-22T05:07:10.427Z",
+  "totalProcessed": 87,
+  "success": 87,
+  "failed": 0,
+  "details": [
+    {
+      "email": "midmost44@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1752735377977",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "kang4229@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093216775",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "catsocute77@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091698655",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "catsocute77@naver.com \r\n",
+      "status": "success",
+      "success": true,
+      "userId": "17531607472622n6is1vr3",
+      "fundings": [
+        "funding-2"
+      ]
+    },
+    {
+      "email": "ks8132497@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091249037",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "kwonyo7370@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093227412",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "dkkh78@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090699494",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "hanlsogi@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090774346",
+      "fundings": [
+        "funding-1",
+        "funding-2"
+      ]
+    },
+    {
+      "email": " hanlsogi@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753160752389w3hsdc1xn",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "zxz3600@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090851551",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "min_you@kakao.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091963738",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "gimdoil080@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091233652",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": " kdh43120@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753160756229a5mnb9gt4",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "catsign@empas.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091989111",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "kstour12345@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090807176",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "grlema@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091380792",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "meeso623@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092021651",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "kyyong3427@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090299120",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "0112kig@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092045260",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "sksdhr55@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090368588",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "tpwnsdl112@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090610009",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "rdt1988@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091361875",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "black8411@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090592052",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "dbwls842635@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090741964",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "fast2k2@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092066855",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "joo576457@nate.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091683628",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "joo576457@nate.com \r\n",
+      "status": "success",
+      "success": true,
+      "userId": "1753160769989g26gl7n3m",
+      "fundings": [
+        "funding-2"
+      ]
+    },
+    {
+      "email": "redfoxnine@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092086484",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "kimk0112k@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090666471",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "nam134689@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091422617",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "sunitmd@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092119850",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "clgud0514@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091844615",
+      "fundings": [
+        "funding-2"
+      ]
+    },
+    {
+      "email": "payworld@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091262575",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "yeonnniq@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090933376",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "changnim@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091816791",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "changnimb@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "17531607787790sbv7h9wv",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "abba23@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092142837",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "seoyouseub@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092160256",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "sys5046@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093276154",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "sonja2486@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092192480",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "ssh01029519494@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093287410",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "jayeongshin@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091715194",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "else70@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092223975",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "dayoung291@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092239893",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "Hangsinhyun@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090390963",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "smk9635@nate.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090681734",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": " smk9635@nate.com",
+      "status": "success",
+      "success": true,
+      "userId": "17531607893985rpfvkdgt",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "silver-iron@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090650752",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "elman57e@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092278980",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "1jongku@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753092298719",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "dbtjdrms123123@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090719072",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "yjh36906@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091731189",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "rhkdrb960@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092318293",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "palefe84@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093316422",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "gsangtop1@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092336239",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "kl5787@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090575138",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "shlee750315@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091651256",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "da2312@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753091747517",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "  sinsung0204@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753160800570fufxpc2t2",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "sinsung0204@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091404936",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "  syrhym@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753160802588ij3jbm6n3",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "syrhym@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090956635",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "im2995@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091215288",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "siver0604@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091785476",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "nhicjjh@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091667258",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "capenters76@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091456899",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "wlgh2400@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090522568",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "sh04249036@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091800615",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "jeongyj119@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093353117",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "jjung3760@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092380251",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "jungjjf892@gmail.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091162151",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "saines1@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090877221",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "jsg5227@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091767412",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "usher522@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753093113826",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "email0808@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092399655",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "csoo1000@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753160817233xi4ti10c6",
+      "fundings": [
+        "funding-1",
+        "funding-2"
+      ]
+    },
+    {
+      "email": " csoo1000@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753160818698v05hgw6c7",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "cws07127@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090632488",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "young-417157@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090760923",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "free477@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090560128",
+      "fundings": [
+        "funding-1",
+        "funding-2",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "jjan011@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092462779",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "chjs2805@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091584354",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "00polaris00@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091638396",
+      "fundings": [
+        "funding-1",
+        "funding-3"
+      ]
+    },
+    {
+      "email": "Hyunju7254@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753090826993",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "hyunju7254@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753092480522",
+      "fundings": [
+        "funding-3"
+      ]
+    },
+    {
+      "email": "his7464@naver.com",
+      "status": "success",
+      "success": true,
+      "userId": "1753091345434",
+      "fundings": [
+        "funding-1"
+      ]
+    },
+    {
+      "email": "mbmetal@hanmail.net",
+      "status": "success",
+      "success": true,
+      "userId": "1753090915900",
+      "fundings": [
+        "funding-1"
+      ]
+    }
+  ]
+}

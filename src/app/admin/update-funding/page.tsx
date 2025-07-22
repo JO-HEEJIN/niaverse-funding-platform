@@ -147,12 +147,52 @@ export default function UpdateFundingPage() {
     setLoading(true);
     setMessage('');
 
+    // Input validation
+    if (!email || !fundingId || !amount || !accumulatedIncome) {
+      setMessage('모든 필드를 입력해주세요.');
+      setLoading(false);
+      return;
+    }
+
+    // Email validation
+    if (!email.includes('@')) {
+      setMessage('유효한 이메일 주소를 입력해주세요.');
+      setLoading(false);
+      return;
+    }
+
+    // Number validation
+    const numericAmount = parseInt(amount);
+    const numericIncome = parseInt(accumulatedIncome);
+    
+    if (isNaN(numericAmount) || isNaN(numericIncome)) {
+      setMessage('금액과 수익금은 숫자로 입력해주세요.');
+      setLoading(false);
+      return;
+    }
+
+    if (numericAmount < 0 || numericIncome < 0) {
+      setMessage('금액과 수익금은 0 이상이어야 합니다.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setMessage('Please login as admin first');
+        setMessage('관리자로 먼저 로그인해주세요.');
+        setLoading(false);
         return;
       }
+
+      const requestData = {
+        email: email.trim(),
+        fundingId,
+        amount: numericAmount,
+        accumulatedIncome: numericIncome,
+      };
+
+      console.log('Sending update request:', requestData);
 
       const response = await fetch('/api/admin/update-user-funding', {
         method: 'POST',
@@ -160,23 +200,33 @@ export default function UpdateFundingPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          email,
-          fundingId,
-          amount: parseInt(amount),
-          accumulatedIncome: parseInt(accumulatedIncome),
-        }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
+      console.log('Server response:', { status: response.status, data });
 
       if (response.ok) {
-        setMessage(`Success! Updated funding for ${data.user}`);
+        setMessage(`✅ 성공! ${data.user}님의 ${fundingId} 펀딩 정보가 업데이트되었습니다.`);
+        
+        // Reset form after successful update
+        setTimeout(() => {
+          setAmount('');
+          setAccumulatedIncome('');
+          setMessage('');
+        }, 3000);
       } else {
-        setMessage(`Error: ${data.message || data.error}`);
+        const errorMsg = data.message || data.error || '알 수 없는 오류';
+        setMessage(`❌ 오류: ${errorMsg}`);
+        
+        // Log detailed error for debugging
+        if (data.received || data.required) {
+          console.error('Validation error details:', data);
+        }
       }
     } catch (error) {
-      setMessage('Failed to update funding data');
+      console.error('Network error:', error);
+      setMessage('❌ 네트워크 오류가 발생했습니다. 콘솔을 확인하세요.');
     } finally {
       setLoading(false);
     }

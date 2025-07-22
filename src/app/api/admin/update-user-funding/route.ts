@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { db } from '@/lib/db';
-import { users, purchases } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
 import { UserService } from '@/lib/db/userService';
+import { PurchaseService } from '@/lib/db/purchaseService';
+import { Pool } from 'pg';
+
+// Database connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://niaverse_admin:Qlalfqjsgh1@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse',
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+// ID 생성 함수
+function generateId() {
+  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+}
 
 export async function POST(request: NextRequest) {
+  const client = await pool.connect();
+  
   try {
     // Check authorization
     const authHeader = request.headers.get('authorization');
@@ -24,77 +38,101 @@ export async function POST(request: NextRequest) {
 
     const { email, fundingId, amount, accumulatedIncome } = await request.json();
 
-    // Find user by email
-    const targetUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    console.log('Update request data:', { email, fundingId, amount, accumulatedIncome });
 
-    if (!targetUser.length) {
+    // Input validation
+    if (!email || !fundingId || amount === undefined || accumulatedIncome === undefined) {
+      return NextResponse.json({
+        message: 'Missing required fields',
+        required: ['email', 'fundingId', 'amount', 'accumulatedIncome'],
+        received: { email, fundingId, amount, accumulatedIncome }
+      }, { status: 400 });
+    }
+
+    // Validate amount and accumulatedIncome are numbers
+    if (isNaN(Number(amount)) || isNaN(Number(accumulatedIncome))) {
+      return NextResponse.json({
+        message: 'Amount and accumulatedIncome must be numbers',
+        received: { amount: typeof amount, accumulatedIncome: typeof accumulatedIncome }
+      }, { status: 400 });
+    }
+
+    await client.query('BEGIN');
+
+    // Find user by email
+    const userResult = await client.query(
+      'SELECT id, name FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (userResult.rows.length === 0) {
+      await client.query('ROLLBACK');
       return NextResponse.json(
-        { error: 'User not found' },
+        { message: 'User not found', email: email },
         { status: 404 }
       );
     }
 
-    const userId = targetUser[0].id;
+    const userId = userResult.rows[0].id;
+    const userName = userResult.rows[0].name;
 
     // Check existing purchase
-    const existingPurchase = await db
-      .select()
-      .from(purchases)
-      .where(
-        and(
-          eq(purchases.userId, userId),
-          eq(purchases.fundingId, fundingId)
-        )
-      );
+    const existingResult = await client.query(
+      'SELECT id FROM purchases WHERE user_id = $1 AND funding_id = $2',
+      [userId, fundingId]
+    );
 
-    if (existingPurchase.length > 0) {
-      // Update existing purchase
-      await db
-        .update(purchases)
-        .set({
-          quantity: amount,
-          price: amount.toString(),
-          accumulatedIncome: accumulatedIncome.toString(),
-          updatedAt: new Date()
-        })
-        .where(
-          and(
-            eq(purchases.userId, userId),
-            eq(purchases.fundingId, fundingId)
-          )
-        );
-    } else {
-      // Create new purchase
-      await db.insert(purchases).values({
-        userId: userId,
-        fundingId: fundingId,
-        quantity: amount,
-        price: amount.toString(),
-        accumulatedIncome: accumulatedIncome.toString(),
-        contractSigned: true,
-        lastIncomeUpdate: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+    // Calculate quantity based on funding type
+    let quantity = Number(amount);
+    if (fundingId === 'funding-3') {
+      // For VAST, quantity is amount/1000 (1000원 = 1 VAST)
+      quantity = Math.floor(Number(amount) / 1000);
+    } else if (fundingId === 'funding-1') {
+      // For mining, quantity is number of mining units
+      quantity = Math.floor(Number(amount) / 1000000); // 1M won = 1 unit
     }
+
+    if (existingResult.rows.length > 0) {
+      // Update existing purchase
+      await client.query(
+        `UPDATE purchases 
+         SET quantity = $1, price = $2, accumulated_income = $3, updated_at = CURRENT_TIMESTAMP
+         WHERE user_id = $4 AND funding_id = $5`,
+        [quantity, amount.toString(), accumulatedIncome.toString(), userId, fundingId]
+      );
+    } else {
+      // Create new purchase with generated ID
+      const purchaseId = generateId();
+      await client.query(
+        `INSERT INTO purchases (id, user_id, funding_id, quantity, price, accumulated_income, contract_signed, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        [purchaseId, userId, fundingId, quantity, amount.toString(), accumulatedIncome.toString()]
+      );
+    }
+
+    await client.query('COMMIT');
 
     return NextResponse.json({
       success: true,
       message: 'Funding data updated successfully',
-      user: targetUser[0].name,
+      user: userName,
       fundingId: fundingId,
-      amount: amount,
-      accumulatedIncome: accumulatedIncome
+      amount: Number(amount),
+      accumulatedIncome: Number(accumulatedIncome),
+      quantity: quantity
     });
+
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error updating funding data:', error);
     return NextResponse.json(
-      { error: 'Failed to update funding data' },
+      { 
+        message: 'Failed to update funding data',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 }

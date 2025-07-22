@@ -1,0 +1,443 @@
+{
+  "timestamp": "2025-07-22T05:04:39.484Z",
+  "totalProcessed": 87,
+  "success": 0,
+  "failed": 87,
+  "details": [
+    {
+      "email": "midmost44@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kang4229@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "catsocute77@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "catsocute77@naver.com \r\n",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "ks8132497@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kwonyo7370@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "dkkh78@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "hanlsogi@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": " hanlsogi@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "zxz3600@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "min_you@kakao.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "gimdoil080@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": " kdh43120@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "catsign@empas.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kstour12345@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "grlema@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "meeso623@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kyyong3427@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "0112kig@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "sksdhr55@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "tpwnsdl112@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "rdt1988@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "black8411@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "dbwls842635@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "fast2k2@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "joo576457@nate.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "joo576457@nate.com \r\n",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "redfoxnine@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kimk0112k@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "nam134689@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "sunitmd@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "clgud0514@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "payworld@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "yeonnniq@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "changnim@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "changnimb@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "abba23@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "seoyouseub@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "sys5046@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "sonja2486@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "ssh01029519494@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jayeongshin@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "else70@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "dayoung291@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "Hangsinhyun@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "smk9635@nate.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": " smk9635@nate.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "silver-iron@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "elman57e@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "1jongku@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "dbtjdrms123123@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "yjh36906@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "rhkdrb960@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "palefe84@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "gsangtop1@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "kl5787@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "shlee750315@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "da2312@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "  sinsung0204@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "sinsung0204@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "  syrhym@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "syrhym@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "im2995@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "siver0604@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "nhicjjh@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "capenters76@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "wlgh2400@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "sh04249036@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jeongyj119@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jjung3760@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jungjjf892@gmail.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "saines1@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jsg5227@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "usher522@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "email0808@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "csoo1000@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": " csoo1000@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"users\" violates not-null constraint"
+    },
+    {
+      "email": "cws07127@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "young-417157@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "free477@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "jjan011@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "chjs2805@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "00polaris00@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "Hyunju7254@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "hyunju7254@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "his7464@naver.com",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    },
+    {
+      "email": "mbmetal@hanmail.net",
+      "status": "error",
+      "error": "null value in column \"id\" of relation \"purchases\" violates not-null constraint"
+    }
+  ]
+}
