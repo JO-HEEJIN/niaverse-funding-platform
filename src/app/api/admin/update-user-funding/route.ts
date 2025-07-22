@@ -82,14 +82,23 @@ export async function POST(request: NextRequest) {
       [userId, fundingId]
     );
 
-    // Calculate quantity based on funding type
+    // Calculate quantity and price based on funding type
     let quantity = Number(amount);
+    let price = Number(amount);
+    
     if (fundingId === 'funding-3') {
       // For VAST, quantity is amount/1000 (1000원 = 1 VAST)
       quantity = Math.floor(Number(amount) / 1000);
+      price = Number(amount); // Price in won
     } else if (fundingId === 'funding-1') {
-      // For mining, quantity is number of mining units
-      quantity = Math.floor(Number(amount) / 1000000); // 1M won = 1 unit
+      // For Doge mining, amount is the number of mining units (quantity)
+      // Admin inputs quantity directly, calculate price as quantity * 1M won
+      quantity = Number(amount);
+      price = quantity * 1000000; // 1 mining unit = 1M won
+    } else {
+      // For funding-2 (Data Center), amount is price in won
+      quantity = Number(amount);
+      price = Number(amount);
     }
 
     if (existingResult.rows.length > 0) {
@@ -98,7 +107,7 @@ export async function POST(request: NextRequest) {
         `UPDATE purchases 
          SET quantity = $1, price = $2, accumulated_income = $3, updated_at = CURRENT_TIMESTAMP
          WHERE user_id = $4 AND funding_id = $5`,
-        [quantity, amount.toString(), accumulatedIncome.toString(), userId, fundingId]
+        [quantity, price.toString(), accumulatedIncome.toString(), userId, fundingId]
       );
     } else {
       // Create new purchase with generated ID
@@ -106,7 +115,7 @@ export async function POST(request: NextRequest) {
       await client.query(
         `INSERT INTO purchases (id, user_id, funding_id, quantity, price, accumulated_income, contract_signed, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-        [purchaseId, userId, fundingId, quantity, amount.toString(), accumulatedIncome.toString()]
+        [purchaseId, userId, fundingId, quantity, price.toString(), accumulatedIncome.toString()]
       );
     }
 
@@ -118,6 +127,7 @@ export async function POST(request: NextRequest) {
       user: userName,
       fundingId: fundingId,
       amount: Number(amount),
+      price: price,
       accumulatedIncome: Number(accumulatedIncome),
       quantity: quantity
     });
