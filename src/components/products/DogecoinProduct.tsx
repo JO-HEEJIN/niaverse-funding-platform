@@ -13,29 +13,11 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
   const dogePerUnit = 1000; // 1 mining unit = 1000 Doge
   const totalDogeCoins = miningUnits * dogePerUnit;
   
-  // Calculate days since first purchase to determine accumulated income
-  const calculateAccumulatedIncome = () => {
-    if (purchases.length === 0) return 0;
-    
-    // Get earliest purchase date
-    const earliestPurchase = purchases.reduce((earliest, current) => {
-      const currentDate = new Date(current.timestamp);
-      const earliestDate = new Date(earliest.timestamp);
-      return currentDate < earliestDate ? current : earliest;
-    });
-    
-    const startDate = new Date(earliestPurchase.timestamp);
-    const currentDate = new Date();
-    
-    // Calculate days passed since first purchase
-    const daysPassed = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    // Daily income = mining units × 2 (each mining unit generates 2 Doge/day)
-    // Accumulated income = mining units × 2 × days passed
-    return miningUnits * 2 * Math.max(daysPassed, 0);
-  };
-  
-  const accumulatedIncome = calculateAccumulatedIncome();
+  // Use accumulated income from database (set by admin) instead of calculating
+  const accumulatedIncome = purchases.reduce((sum, p) => {
+    const income = typeof p.accumulatedIncome === 'number' ? p.accumulatedIncome : 0;
+    return sum + income;
+  }, 0);
   const dailyIncomeRate = miningUnits * 2; // Each mining unit generates 2 Doge/day
   
   return (
