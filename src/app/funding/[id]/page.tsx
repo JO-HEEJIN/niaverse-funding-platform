@@ -31,7 +31,10 @@ export default function FundingPage({ params }: FundingPageProps) {
       return;
     }
 
-    const fundingOption = fundingOptions.find(option => option.id === id);
+    // Handle both formats: '1', '2', '3' and 'funding-1', 'funding-2', 'funding-3'
+    const fundingOption = fundingOptions.find(option => 
+      option.id === id || option.id === `funding-${id}`
+    );
     if (fundingOption) {
       setFunding(fundingOption);
     }
@@ -248,7 +251,7 @@ export default function FundingPage({ params }: FundingPageProps) {
                   <div>
                     <div className="h-64 bg-gray-200 rounded-lg mb-6 flex items-center justify-center">
                       <img
-                        src={`/img${funding.id}.png`}
+                        src={`/img${funding.id.split('-')[1]}.png`}
                         alt={funding.title}
                         className="h-full w-full object-cover rounded-lg"
                         onError={(e) => {
