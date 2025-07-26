@@ -199,6 +199,21 @@ function generateContractHtml(data: Record<string, any>): string {
     }
     return dateStr;
   };
+
+  // VAST TOKEN (펀딩 III)의 경우 특별한 확약서 생성
+  if (fundingType === '펀딩 III') {
+    return generateVastTokenContract({
+      contractId,
+      name,
+      birthDate,
+      email,
+      phone,
+      address,
+      contractDate,
+      signature,
+      formatBirthDate
+    });
+  }
   
   return `
     <!DOCTYPE html>
@@ -206,7 +221,7 @@ function generateContractHtml(data: Record<string, any>): string {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>49인 이하 투자조합 계약서</title>
+      <title>투자조합 계약서</title>
       <style>
         @page { 
           size: A4; 
@@ -631,4 +646,209 @@ async function sendHTMLEmail(data: Record<string, any>) {
   const result = await transporter.sendMail(mailOptions);
   console.log('HTML email sent successfully:', result.messageId);
   return result;
+}
+
+function generateVastTokenContract(data: Record<string, any>): string {
+  const { contractId, name, birthDate, email, phone, address, contractDate, signature, formatBirthDate } = data;
+  
+  // 계약일에서 월/일 추출
+  const contractDateMatch = contractDate.match(/(\d+)년\s*(\d+)월\s*(\d+)일/);
+  const month = contractDateMatch ? contractDateMatch[2] : '___';
+  const day = contractDateMatch ? contractDateMatch[3] : '___';
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>VAST TOKEN 확약서</title>
+      <style>
+        @page { 
+          size: A4; 
+          margin: 20mm; 
+        }
+        body { 
+          font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
+          line-height: 1.8; 
+          color: #333; 
+          font-size: 12px;
+          margin: 0;
+          padding: 20px;
+        }
+        .header { 
+          text-align: center; 
+          margin-bottom: 30px; 
+          border-bottom: 2px solid #000; 
+          padding-bottom: 20px; 
+        }
+        .title { 
+          font-size: 24px; 
+          font-weight: bold; 
+          margin-bottom: 10px; 
+        }
+        .contract-info { 
+          margin-bottom: 30px; 
+          padding: 20px; 
+          background-color: #f8f9fa; 
+          border: 1px solid #ddd;
+          border-radius: 8px; 
+        }
+        .content-section {
+          margin: 20px 0;
+          line-height: 1.8;
+        }
+        .section {
+          margin: 25px 0;
+        }
+        .section-title {
+          font-weight: bold;
+          margin-bottom: 15px;
+          font-size: 14px;
+        }
+        .signature-section {
+          margin-top: 50px;
+          page-break-inside: avoid;
+        }
+        .signature-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 30px;
+        }
+        .signature-box {
+          width: 45%;
+        }
+        .signature-img {
+          max-width: 150px;
+          max-height: 80px;
+          border: 1px solid #ccc;
+          padding: 5px;
+          margin: 10px 0;
+        }
+        .signature-line {
+          border-bottom: 1px solid #000;
+          width: 200px;
+          height: 30px;
+          margin: 15px 0;
+        }
+        .date-section {
+          text-align: center;
+          margin: 40px 0;
+          font-weight: bold;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="title">확약서</div>
+        <div>계약 번호: ${contractId}</div>
+        <div>NIA CLOUD</div>
+      </div>
+      
+      <div class="contract-info">
+        <h4><strong>계약자 정보</strong></h4>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5; width: 120px;"><strong>성명</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5; width: 120px;"><strong>생년월일</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${formatBirthDate(birthDate)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>이메일</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${email}</td>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>전화번호</strong></td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${phone}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>주소</strong></td>
+            <td colspan="3" style="padding: 8px; border: 1px solid #ddd;">${address}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd; background: #f5f5f5;"><strong>계약일</strong></td>
+            <td colspan="3" style="padding: 8px; border: 1px solid #ddd;">${contractDate}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <p style="margin-bottom: 25px; font-weight: 500;">
+          본인은 아래 명시된 바와 같이 "VAST TOKEN" 거래 및 상장에 관한 사항을 확약합니다.
+        </p>
+        
+        <div class="section">
+          <div class="section-title">1. 당사자 정보</div>
+          <p style="margin-bottom: 12px;">확약인(갑): 임 희 윤 (010-2843-7200)</p>
+          <p style="margin-bottom: 12px;">주 소: 서울특별시 강남구 테헤란로 143, 고운빌딩 8층</p>
+          <p style="margin-bottom: 12px;">소 속: (주)히스코에셋 대표이사</p>
+          <p style="margin-bottom: 12px;">사업자등록번호: 341-86-02558</p>
+          <p style="margin-bottom: 12px;">수익자(을): ( ${name} )</p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">2. 거래 내용</div>
+          <p style="margin-bottom: 15px;">
+            1. "갑"은 "을"로부터 일금 <strong>____________만원 (_______________)</strong>을 받고, 해당 금액에 상응하는 VAST TOKEN <strong>____________개</strong>를 제공 하였음을 확인합니다.
+          </p>
+          <p style="margin-bottom: 15px;">
+            2. "갑"은 2025년 9월 30일 까지 VAST TOKEN을 세계 10대 암호화폐 거래소 중 하나에 상장시키는 것을 보장합니다.
+          </p>
+          <p style="margin-bottom: 15px;">
+            3. 만약 해당 기한까지 상장이 이루어지지 않을 경우, "갑"은 "을"에게 1달러($1) 기준으로 2025년 9월30일 까지 보상할 것을 확약 합니다.
+          </p>
+          <p style="margin-bottom: 10px;">
+            단, 세계10대 거래소가 상장을 9월30일 이전 공지할 경우 2주 간은 유예할수 있다.
+          </p>
+          <p style="margin-bottom: 15px; font-size: 11px; color: #666; font-style: italic;">
+            [ 예) 9월30일 상장예정 공지시 10월15일 까지 유예 기간임. ]
+          </p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">3. 기타 사항</div>
+          <p style="margin-bottom: 15px;">
+            1. 본 확약서는 법적 효력을 가지며, 이에 따라 "갑"은 계약의무를 성실히 이행할 것을 보증합니다.
+          </p>
+          <p style="margin-bottom: 15px;">
+            2. 본 확약과 관련하여 분쟁이 발생할 경우, 당사자는 협의를 통해 해결하며, 협의가 이루어지지 않을 경우 대한민국 법률에 따릅니다.
+          </p>
+          <p style="margin-bottom: 15px;">
+            3. 본 확약서는 양 당사자가 서명한 날부터 효력을 발생합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="date-section">
+        2025년 ${month}월 ${day}일
+      </div>
+
+      <div class="signature-section">
+        <div class="signature-row">
+          <div class="signature-box">
+            <h4 style="margin-bottom: 20px; font-weight: bold;">갑 (확약인)</h4>
+            <p style="margin-bottom: 10px;">성 명: 임 희윤</p>
+            <p style="margin-bottom: 10px;">소 속: (주)히스코에셋 대표이사</p>
+            <p style="margin-bottom: 15px;">사업자등록번호: 341-86-02558</p>
+            <div class="signature-line"></div>
+            <p style="font-size: 11px; text-align: center; margin-top: 5px;">서명: 임 희윤 (인)</p>
+          </div>
+          
+          <div class="signature-box">
+            <h4 style="margin-bottom: 20px; font-weight: bold;">을 (수익자)</h4>
+            <p style="margin-bottom: 10px;">성 명: ${name}</p>
+            <p style="margin-bottom: 15px;">주민등록번호: _______________</p>
+            ${signature ? `<img src="${signature}" alt="전자서명" class="signature-img" style="max-width: 150px; max-height: 80px; border: 1px solid #ccc; padding: 5px; margin: 15px 0; display: block; object-fit: contain;">` : '<div class="signature-line"></div>'}
+            <p style="font-size: 11px; text-align: center; margin-top: 5px;">서명: _______________ (인)</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 20px;">
+        <p>본 확약서는 NIA CLOUD 시스템을 통해 전자적으로 생성되었습니다.</p>
+        <p>생성일시: ${new Date().toLocaleString('ko-KR')}</p>
+      </div>
+    </body>
+    </html>
+  `;
 }
