@@ -372,7 +372,7 @@ export default function ContractPage() {
                 {/* Contract Terms */}
                 <div className="bg-white rounded-lg p-6 mb-8 text-sm text-gray-800 max-h-96 overflow-y-auto">
                   {/* VAST Coin 특별 계약서 */}
-                  {purchaseData.fundingTitle === 'VAST' ? (
+                  {purchaseData.fundingTitle === '펀딩 III' ? (
                     <div>
                       <h4 className="text-lg font-bold text-gray-900 mb-6 text-center">확약서</h4>
                       <div className="space-y-4">
