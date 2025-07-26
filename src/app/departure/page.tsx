@@ -44,7 +44,9 @@ export default function DeparturePage() {
 
   // Funding withdrawal rules
   const getFundingWithdrawalInfo = (fundingId: string) => {
-    const funding = fundingOptions.find(f => `funding-${f.id}` === fundingId);
+    // Handle both 'funding-1' and '1' formats
+    const normalizedId = fundingId.replace('funding-', '');
+    const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === fundingId);
     if (!funding) return null;
 
     switch (funding.id) {
@@ -110,7 +112,9 @@ export default function DeparturePage() {
       const incomeByFunding = purchases.reduce((acc, purchase) => {
         if (!purchase.contractSigned || !purchase.approved) return acc;
         
-        const funding = fundingOptions.find(f => `funding-${f.id}` === purchase.fundingId);
+        // Handle both 'funding-1' and '1' formats
+        const normalizedId = purchase.fundingId.replace('funding-', '');
+        const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === purchase.fundingId);
         if (!funding) return acc;
 
         if (!acc[purchase.fundingId]) {

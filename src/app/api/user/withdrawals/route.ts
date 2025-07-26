@@ -6,7 +6,7 @@ import { fundingOptions } from '@/lib/fundingData';
 import * as nodemailer from 'nodemailer';
 
 // 출금 관련 상수
-const MIN_WITHDRAWAL_AMOUNT = 500000; // 50만원
+const MIN_WITHDRAWAL_AMOUNT = 10000; // 1만원 (기존 50만원에서 인하)
 const MAX_DAILY_WITHDRAWALS = 3;
 const WITHDRAWAL_FEE_RATE = 0.03; // 3%
 
@@ -109,7 +109,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 펀딩별 출금 규칙 확인
-    const funding = fundingOptions.find(f => `funding-${f.id}` === fundingId);
+    // Handle both 'funding-1' and '1' formats
+    const normalizedFundingId = fundingId.replace('funding-', '');
+    const funding = fundingOptions.find(f => f.id === normalizedFundingId || `funding-${f.id}` === fundingId);
     if (!funding) {
       return NextResponse.json(
         { message: '존재하지 않는 펀딩입니다.' },
