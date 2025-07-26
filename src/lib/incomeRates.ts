@@ -18,8 +18,8 @@ export const INCOME_RATES: IncomeRate[] = [
     fundingId: 'funding-1',
     fundingName: 'Doge Coin Mining',
     type: 'daily_fixed',
-    rate: 1, // 1 mining unit = 1 Doge/day (1 mining unit당 하루에 1 Doge)
-    description: 'Each mining unit generates 1 Doge per day'
+    rate: 2, // 1 mining unit = 2 Doge/day (1 mining unit당 하루에 2 Doge)
+    description: 'Each mining unit generates 2 Doge per day'
   },
   {
     fundingId: 'funding-2', 

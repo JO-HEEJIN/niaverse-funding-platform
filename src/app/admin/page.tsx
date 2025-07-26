@@ -636,7 +636,7 @@ export default function AdminPage() {
             <div className="text-sm text-gray-400 mt-2">
               • 이 버튼은 모든 활성 구매 건의 수익을 즉시 계산합니다<br/>
               • 정상적으로는 매일 자정에 자동 실행됩니다<br/>
-              • Doge: 1 mining unit = 1 Doge/day<br/>
+              • Doge: 1 mining unit = 2 Doge/day<br/>
               • Data Center: 월 5% 수익률 (일일 0.167%)
             </div>
           </div>

@@ -102,18 +102,18 @@ function testIncomeCalculations() {
   
   // Doge 계산 테스트
   const dogeTests = [
-    { miningUnits: 77, currentIncome: 30492, expected: 30569 },
-    { miningUnits: 1, currentIncome: 0, expected: 1 },
-    { miningUnits: 100, currentIncome: 5000, expected: 5100 }
+    { miningUnits: 77, currentIncome: 30492, expected: 30646 }, // 30492 + (77 × 2) = 30646
+    { miningUnits: 1, currentIncome: 0, expected: 2 }, // 0 + (1 × 2) = 2
+    { miningUnits: 100, currentIncome: 5000, expected: 5200 } // 5000 + (100 × 2) = 5200
   ];
   
   console.log('\n🐕 Doge Calculations:');
   dogeTests.forEach((test, i) => {
-    const dailyIncome = test.miningUnits * 1; // 1 Doge per mining unit
+    const dailyIncome = test.miningUnits * 2; // 2 Doge per mining unit
     const newTotal = test.currentIncome + dailyIncome;
     const passed = newTotal === test.expected;
     
-    console.log(`Test ${i + 1}: ${test.miningUnits} units, ${test.currentIncome} current → ${newTotal} ${passed ? '✅' : '❌'}`);
+    console.log(`Test ${i + 1}: ${test.miningUnits} units × 2 = ${dailyIncome} daily, ${test.currentIncome} current → ${newTotal} ${passed ? '✅' : '❌'}`);
   });
   
   // Data Center 계산 테스트
@@ -141,7 +141,7 @@ function calculateExpectedDailyTotals() {
   
   // 가정: 현재 활성 구매 건들
   const activePurchases = [
-    { type: 'Doge', miningUnits: 77, dailyIncome: 77 },
+    { type: 'Doge', miningUnits: 77, dailyIncome: 77 * 2 }, // 77 units × 2 = 154 Doge/day
     { type: 'DataCenter', amount: 11000000, dailyIncome: 11000000 * (0.05 / 30) }
   ];
   
