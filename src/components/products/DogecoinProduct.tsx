@@ -17,6 +17,9 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
     return sum + income;
   }, 0);
   
+  // Total Doge Holdings = initial mining units + accumulated income
+  const totalDogeHoldings = miningUnits + accumulatedIncome;
+  
   // Daily Income Rate = mining units (1 mining unit = 1 Doge/day displayed)
   const dailyIncomeRate = miningUnits;
   
@@ -31,9 +34,12 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
-          <p className="stat-label text-gray-400 text-sm mb-2">Total Mining Units</p>
+          <p className="stat-label text-gray-400 text-sm mb-2">Total Doge Holdings</p>
           <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
-            {miningUnits} mining
+            {formatCoinAmount(totalDogeHoldings, 'Doge')}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {miningUnits} mining units + {formatCoinAmount(accumulatedIncome, 'Doge')} earned
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
