@@ -371,45 +371,78 @@ export default function ContractPage() {
 
                 {/* Contract Terms */}
                 <div className="bg-white rounded-lg p-6 mb-8 text-sm text-gray-800 max-h-96 overflow-y-auto">
-                  {/* VAST Coin 특별 계약서 PDF */}
+                  {/* VAST Coin 특별 계약서 */}
                   {purchaseData.fundingTitle === 'VAST' ? (
-                    <div className="text-center">
-                      <h4 className="text-lg font-bold text-gray-900 mb-4">바스트 코인 확약서</h4>
-                      <div className="mb-4">
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 mb-4">
-                          <iframe
-                            src="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf#toolbar=1&navpanes=1&scrollbar=1&page=1&view=FitH"
-                            width="100%"
-                            height="500px"
-                            className="border rounded-lg"
-                            title="바스트 코인 확약서"
-                          >
-                            <div className="text-center p-8">
-                              <p className="mb-4 text-gray-700">PDF를 표시할 수 없습니다.</p>
-                              <a 
-                                href="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                              >
-                                📄 PDF 다운로드하기
-                              </a>
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900 mb-6 text-center">확약서</h4>
+                      <div className="space-y-4">
+                        <p className="mb-4">
+                          본인은 아래 명시된 바와 같이 "VAST TOKEN" 거래 및 상장에 관한 사항을 확약합니다.
+                        </p>
+                        
+                        <div>
+                          <h5 className="font-semibold text-gray-900 mb-2">1. 당사자 정보</h5>
+                          <p className="mb-2">확약인(갑): 임 희 윤 (010-2843-7200)</p>
+                          <p className="mb-2">주 소: 서울특별시 강남구 테헤란로 143, 고운빌딩 8층</p>
+                          <p className="mb-2">소 속: (주)히스코에셋 대표이사</p>
+                          <p className="mb-2">사업자등록번호: 341-86-02558</p>
+                          <p className="mb-2">수익자(을): ( _________________ )</p>
+                        </div>
+
+                        <div>
+                          <h5 className="font-semibold text-gray-900 mb-2">2. 거래 내용</h5>
+                          <p className="mb-2">
+                            1. "갑"은 "을"로부터 일금 <strong>____________만원 (_______________)</strong>을 받고, 해당 금액에 상응하는 VAST TOKEN <strong>____________개</strong>를 제공 하였음을 확인합니다.
+                          </p>
+                          <p className="mb-2">
+                            2. "갑"은 2025년 9월 30일 까지 VAST TOKEN을 세계 10대 암호화폐 거래소 중 하나에 상장시키는 것을 보장합니다.
+                          </p>
+                          <p className="mb-2">
+                            3. 만약 해당 기한까지 상장이 이루어지지 않을 경우, "갑"은 "을"에게 1달러($1) 기준으로 2025년 9월30일 까지 보상할 것을 확약 합니다.
+                          </p>
+                          <p className="mb-2">
+                            단, 세계10대 거래소가 상장을 9월30일 이전 공지할 경우 2주 간은 유예할수 있다.
+                          </p>
+                          <p className="mb-2 text-sm text-gray-600">
+                            [ 예) 9월30일 상장예정 공지시 10월15일 까지 유예 기간임. ]
+                          </p>
+                        </div>
+
+                        <div>
+                          <h5 className="font-semibold text-gray-900 mb-2">3. 기타 사항</h5>
+                          <p className="mb-2">
+                            1. 본 확약서는 법적 효력을 가지며, 이에 따라 "갑"은 계약의무를 성실히 이행할 것을 보증합니다.
+                          </p>
+                          <p className="mb-2">
+                            2. 본 확약과 관련하여 분쟁이 발생할 경우, 당사자는 협의를 통해 해결하며, 협의가 이루어지지 않을 경우 대한민국 법률에 따릅니다.
+                          </p>
+                          <p className="mb-2">
+                            3. 본 확약서는 양 당사자가 서명한 날부터 효력을 발생합니다.
+                          </p>
+                        </div>
+
+                        <div className="mt-8 border-t pt-6">
+                          <p className="text-center font-semibold text-gray-900 mb-6">2025년 ___월 ___일</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                              <h6 className="font-semibold text-gray-900 mb-3">갑 (확약인)</h6>
+                              <p className="mb-2">성 명: 임 희윤</p>
+                              <p className="mb-2">소 속: (주)히스코에셋 대표이사</p>
+                              <p className="mb-2">사업자등록번호: 341-86-02558</p>
+                              <div className="mt-4 border-b border-gray-400 w-48"></div>
+                              <p className="text-xs text-gray-500 mt-1">서명: 임 희윤 (인)</p>
                             </div>
-                          </iframe>
+                            
+                            <div>
+                              <h6 className="font-semibold text-gray-900 mb-3">을 (수익자)</h6>
+                              <p className="mb-2">성 명: _______________</p>
+                              <p className="mb-2">주민등록번호: _______________</p>
+                              <div className="mt-8 border-b border-gray-400 w-48"></div>
+                              <p className="text-xs text-gray-500 mt-1">서명: _______________ (인)</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-center">
-                          <a 
-                            href="/바스트 코인 확약서(9월)-임회장님 수정 요청 사항.pdf" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 text-sm text-blue-600 hover:text-blue-800 border border-blue-600 hover:border-blue-800 rounded-lg transition-colors"
-                          >
-                            📄 새 창에서 PDF 보기
-                          </a>
-                        </div>
-                      </div>
-                      <div className="text-sm text-gray-600 mb-4">
-                        <p>위의 바스트 코인 확약서를 검토하시고 동의하시면 아래 계약 정보를 작성해주세요.</p>
                       </div>
                     </div>
                   ) : (
