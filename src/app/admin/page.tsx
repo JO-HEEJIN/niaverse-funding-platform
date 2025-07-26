@@ -596,29 +596,50 @@ export default function AdminPage() {
 
         <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-lg p-6">
           <h2 className="text-xl font-bold text-white mb-4">관리자 기능</h2>
-          <button
-            onClick={() => {
-              const token = localStorage.getItem('token');
-              fetch('/api/income/calculate', { 
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${token}`
+          <div className="space-y-4">
+            <button
+              onClick={async () => {
+                const token = localStorage.getItem('token');
+                setMessage('수익 계산을 시작합니다...');
+                
+                try {
+                  const response = await fetch('/api/admin/calculate-income', { 
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  });
+                  
+                  const data = await response.json();
+                  
+                  if (data.success) {
+                    const stats = data.statistics;
+                    setMessage(`✅ 수익 계산 완료!
+                    • 처리된 구매: ${stats.processed}개
+                    • 업데이트됨: ${stats.updated}개  
+                    • 건너뜀: ${stats.skipped}개
+                    ${stats.errorCount > 0 ? `• 오류: ${stats.errorCount}개` : ''}`);
+                  } else {
+                    setMessage(`❌ 수익 계산 중 오류 발생: ${data.message}`);
+                  }
+                } catch (error) {
+                  setMessage('❌ 수익 계산 중 네트워크 오류가 발생했습니다');
                 }
-              })
-                .then(res => res.json())
-                .then(data => {
-                  setMessage(data.message || '일일 수익이 계산되었습니다');
-                  setTimeout(() => setMessage(''), 3000);
-                })
-                .catch(() => {
-                  setMessage('수익 계산 중 오류가 발생했습니다');
-                  setTimeout(() => setMessage(''), 3000);
-                });
-            }}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-indigo-700 hover:to-purple-700 transition-all font-medium"
-          >
-            일일 수익 계산
-          </button>
+                
+                setTimeout(() => setMessage(''), 5000);
+              }}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-md hover:from-indigo-700 hover:to-purple-700 transition-all font-medium mr-4"
+            >
+              💰 일일 수익 계산 (수동)
+            </button>
+            
+            <div className="text-sm text-gray-400 mt-2">
+              • 이 버튼은 모든 활성 구매 건의 수익을 즉시 계산합니다<br/>
+              • 정상적으로는 매일 자정에 자동 실행됩니다<br/>
+              • Doge: 1 mining unit = 1 Doge/day<br/>
+              • Data Center: 월 5% 수익률 (일일 0.167%)
+            </div>
+          </div>
         </div>
       </div>
     </div>
