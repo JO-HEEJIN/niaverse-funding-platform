@@ -11,9 +11,6 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
   // Calculate mining units from purchases
   const miningUnits = purchases.reduce((sum, p) => sum + (typeof p.quantity === 'number' ? p.quantity : 0), 0);
   
-  // Total Doge Holdings = mining units (1 mining unit = 1 Doge displayed)
-  const totalDogeCoins = miningUnits;
-  
   // Use accumulated income from database (set by admin) instead of calculating
   const accumulatedIncome = purchases.reduce((sum, p) => {
     const income = typeof p.accumulatedIncome === 'number' ? p.accumulatedIncome : 0;
@@ -34,9 +31,9 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
-          <p className="stat-label text-gray-400 text-sm mb-2">Total Doge Holdings</p>
+          <p className="stat-label text-gray-400 text-sm mb-2">Total Mining Units</p>
           <p className="stat-value text-xl font-bold text-white overflow-hidden text-ellipsis">
-            {formatCoinAmount(totalDogeCoins, 'Doge')}
+            {miningUnits} mining
           </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
@@ -55,7 +52,7 @@ export default function DogecoinProduct({ purchases, totalIncome }: DogecoinProd
         </div>
         {miningUnits > 0 && (
           <p className="text-xs text-gray-500 mt-2">
-            {miningUnits} mining units × 1 Doge/day per unit
+            {miningUnits} mining units generating passive income
           </p>
         )}
       </div>
