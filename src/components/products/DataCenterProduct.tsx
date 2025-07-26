@@ -8,22 +8,21 @@ interface DataCenterProductProps {
 }
 
 export default function DataCenterProduct({ purchases, totalIncome }: DataCenterProductProps) {
-  // Calculate totals with proper number handling and validation
-  const totalAmount = purchases.reduce((sum, p) => {
+  // Calculate purchase amount (initial investment)
+  const purchaseAmount = purchases.reduce((sum, p) => {
     const price = typeof p.price === 'string' ? parseFloat(p.price) : p.price;
     return sum + (isNaN(price) ? 0 : price);
   }, 0);
   
-  const purchaseAmount = totalAmount; // Same as total amount
+  // Calculate accumulated income from purchases
+  const accumulatedIncome = purchases.reduce((sum, p) => {
+    const income = typeof p.accumulatedIncome === 'number' ? p.accumulatedIncome : 
+                   typeof p.accumulatedIncome === 'string' ? parseFloat(p.accumulatedIncome) : 0;
+    return sum + (isNaN(income) ? 0 : income);
+  }, 0);
   
-  // Ensure totalIncome is a clean number with thorough validation
-  let cleanTotalIncome = 0;
-  if (typeof totalIncome === 'number' && !isNaN(totalIncome)) {
-    cleanTotalIncome = totalIncome;
-  } else if (typeof totalIncome === 'string') {
-    const parsed = parseFloat(totalIncome);
-    cleanTotalIncome = isNaN(parsed) ? 0 : parsed;
-  }
+  // Total Amount = Purchase Amount + Accumulated Income (cumulative value)
+  const totalAmount = purchaseAmount + accumulatedIncome;
   
   
   return (
@@ -41,6 +40,9 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
           <p className="stat-value text-lg font-bold text-white overflow-hidden text-ellipsis">
             {formatKRW(totalAmount)}
           </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {formatKRW(purchaseAmount)} invested + {formatKRW(accumulatedIncome)} earned
+          </p>
         </div>
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Purchase Amount</p>
@@ -51,7 +53,7 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
         <div className="stat-item bg-gray-800/50 rounded-lg p-4">
           <p className="stat-label text-gray-400 text-sm mb-2">Accumulated Income</p>
           <p className="stat-value text-lg font-bold text-green-400 overflow-hidden text-ellipsis">
-            {formatKRW(cleanTotalIncome)}
+            {formatKRW(accumulatedIncome)}
           </p>
         </div>
       </div>
@@ -63,9 +65,9 @@ export default function DataCenterProduct({ purchases, totalIncome }: DataCenter
         </div>
         <div className="bg-gray-900/50 rounded p-3">
           <p className="income-value text-xl sm:text-2xl font-bold text-blue-400 overflow-hidden text-ellipsis">
-            {formatKRW(cleanTotalIncome)}
+            {formatKRW(accumulatedIncome)}
           </p>
-          <span className="period text-gray-400 text-sm">/Mon</span>
+          <span className="period text-gray-400 text-sm">/Accumulated</span>
         </div>
       </div>
       
