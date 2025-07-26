@@ -108,14 +108,25 @@ export default function DeparturePage() {
       }
       
       const purchases: Purchase[] = await response.json();
+      console.log('[DEBUG] API purchases response:', purchases);
       
       const incomeByFunding = purchases.reduce((acc, purchase) => {
-        if (!purchase.contractSigned || !purchase.approved) return acc;
+        console.log('[DEBUG] Processing purchase:', purchase);
+        
+        if (!purchase.contractSigned || !purchase.approved) {
+          console.log('[DEBUG] Skipping - contractSigned:', purchase.contractSigned, 'approved:', purchase.approved);
+          return acc;
+        }
         
         // Handle both 'funding-1' and '1' formats
         const normalizedId = purchase.fundingId.replace('funding-', '');
         const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === purchase.fundingId);
-        if (!funding) return acc;
+        console.log('[DEBUG] Funding match for', purchase.fundingId, ':', funding);
+        
+        if (!funding) {
+          console.log('[DEBUG] No funding match found');
+          return acc;
+        }
 
         if (!acc[purchase.fundingId]) {
           acc[purchase.fundingId] = {
@@ -138,7 +149,8 @@ export default function DeparturePage() {
       }, {} as Record<string, FundingIncome>);
 
       const incomeArray = Object.values(incomeByFunding);
-      
+      console.log('[DEBUG] Final income by funding:', incomeByFunding);
+      console.log('[DEBUG] Income array:', incomeArray);
       
       setFundingIncomes(incomeArray);
     } catch (error) {

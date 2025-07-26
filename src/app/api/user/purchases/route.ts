@@ -34,8 +34,9 @@ export async function GET(request: NextRequest) {
     
     // Add funding details to each purchase
     const purchasesWithDetails = approvedPurchases.map((purchase: Record<string, any>) => {
-      // Find funding by exact fundingId match
-      const funding = fundingOptions.find(f => f.id === purchase.fundingId);
+      // Find funding by matching both 'funding-1' and '1' formats
+      const normalizedId = purchase.fundingId.replace('funding-', '');
+      const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === purchase.fundingId);
       
       return {
         ...purchase,
