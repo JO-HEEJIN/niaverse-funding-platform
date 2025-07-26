@@ -109,9 +109,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 펀딩별 출금 규칙 확인
-    // Handle both 'funding-1' and '1' formats
-    const normalizedFundingId = fundingId.replace('funding-', '');
-    const funding = fundingOptions.find(f => f.id === normalizedFundingId || `funding-${f.id}` === fundingId);
+    const funding = fundingOptions.find(f => f.id === fundingId);
     if (!funding) {
       return NextResponse.json(
         { message: '존재하지 않는 펀딩입니다.' },
@@ -120,7 +118,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 펀딩 3 (VAST)는 출금 불가
-    if (funding.id === '3') {
+    if (funding.id === 'funding-3') {
       return NextResponse.json(
         { message: 'VAST는 출금이 불가능합니다.' },
         { status: 400 }
@@ -131,11 +129,11 @@ export async function POST(request: NextRequest) {
     let minAmount = MIN_WITHDRAWAL_AMOUNT;
     let unit = '원';
     
-    if (funding.id === '1') {
+    if (funding.id === 'funding-1') {
       // 펀딩 I (Doge) - 개수 단위, 최소 1개
       minAmount = 1;
       unit = 'Doge';
-    } else if (funding.id === '2') {
+    } else if (funding.id === 'funding-2') {
       // 펀딩 II (Data Center) - 원화 단위
       minAmount = MIN_WITHDRAWAL_AMOUNT;
       unit = '원';

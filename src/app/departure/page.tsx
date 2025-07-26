@@ -44,13 +44,12 @@ export default function DeparturePage() {
 
   // Funding withdrawal rules
   const getFundingWithdrawalInfo = (fundingId: string) => {
-    // Handle both 'funding-1' and '1' formats
-    const normalizedId = fundingId.replace('funding-', '');
-    const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === fundingId);
+    // Find funding by ID
+    const funding = fundingOptions.find(f => f.id === fundingId);
     if (!funding) return null;
 
     switch (funding.id) {
-      case '1': // 펀딩 I - Doge coin
+      case 'funding-1': // 펀딩 I - Doge coin
         return {
           canWithdraw: true,
           unit: 'Doge',
@@ -58,7 +57,7 @@ export default function DeparturePage() {
           inputType: 'number',
           description: '도지 코인 개수로 출금'
         };
-      case '2': // 펀딩 II - Data Center
+      case 'funding-2': // 펀딩 II - Data Center
         return {
           canWithdraw: true,
           unit: '₩',
@@ -66,7 +65,7 @@ export default function DeparturePage() {
           inputType: 'number',
           description: '원화로 출금'
         };
-      case '3': // 펀딩 III - VAST
+      case 'funding-3': // 펀딩 III - VAST
         return {
           canWithdraw: false,
           unit: 'VAST',
@@ -119,8 +118,7 @@ export default function DeparturePage() {
         }
         
         // Handle both 'funding-1' and '1' formats
-        const normalizedId = purchase.fundingId.replace('funding-', '');
-        const funding = fundingOptions.find(f => f.id === normalizedId || `funding-${f.id}` === purchase.fundingId);
+        const funding = fundingOptions.find(f => f.id === purchase.fundingId);
         console.log('[DEBUG] Funding match for', purchase.fundingId, ':', funding);
         
         if (!funding) {
