@@ -9,10 +9,10 @@ export const getDatabaseUrl = () => {
     return envUrl;
   }
   
-  // Fallback for production (temporary)
+  // Fallback for production
   if (process.env.NODE_ENV === 'production') {
-    console.log('WARNING: Using hardcoded fallback database URL');
-    return 'postgresql://niaverse_admin:Qlalfqjsgh1@niaverse-db.ch8meqesioqg.us-east-2.rds.amazonaws.com:5432/niaverse?sslmode=require';
+    console.error('ERROR: DATABASE_URL environment variable is required in production');
+    throw new Error('DATABASE_URL is not set');
   }
   
   // Local development
